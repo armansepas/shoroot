@@ -162,66 +162,10 @@ export default function BetDetails() {
 
 		setResolving(true);
 		try {
-			// Update bet status and result
-			await Bet.update(bet.id, {
-				status: "resolved",
-				result: selectedResult,
-				resolution_notes: resolutionNotes,
-			});
+			// Resolve the bet with the winning option
+			await Bet.resolve(bet.id, selectedResult);
 
-			// Update participant statuses and credits
-			const updates = [];
-			for (const participation of participations) {
-				if (participation.status === "accepted") {
-					const isWinner =
-						participation.chosen_option === selectedResult;
-					const winnings = isWinner ? bet.amount : -bet.amount;
-
-					updates.push(
-						BetParticipation.update(participation.id, {
-							status: isWinner ? "won" : "lost",
-							winnings: winnings,
-						})
-					);
-
-					// Update user credits
-					const participantUser = await User.filter({
-						email: participation.user_email,
-					});
-					if (participantUser.length > 0) {
-						const currentCredit =
-							participantUser[0].credit || 0;
-						updates.push(
-							User.update(participantUser[0].id, {
-								credit: currentCredit + winnings,
-								...(isWinner
-									? {
-											total_wins:
-												(participantUser[0]
-													.total_wins ||
-													0) + 1,
-											total_winnings:
-												(participantUser[0]
-													.total_winnings ||
-													0) + bet.amount,
-									  }
-									: {
-											total_losses:
-												(participantUser[0]
-													.total_losses ||
-													0) + 1,
-											total_losses_amount:
-												(participantUser[0]
-													.total_losses_amount ||
-													0) + bet.amount,
-									  }),
-							})
-						);
-					}
-				}
-			}
-
-			await Promise.all(updates);
+			// Reload bet details to get updated data
 			await loadBetDetails();
 		} catch (error) {
 			console.error("Error resolving bet:", error);

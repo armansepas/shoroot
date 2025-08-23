@@ -561,14 +561,16 @@ app.put("/api/bets/:id/resolve", authenticateToken, (req, res) => {
 	const { winning_option } = req.body;
 
 	db.get(
-		"SELECT * FROM bets WHERE id = ? AND status = 'open'",
+		'SELECT * FROM bets WHERE id = ? AND status IN ("open", "active", "in_progress")',
 		[id],
 		(err, bet) => {
 			if (err) {
 				return res.status(500).json({ error: "Database error" });
 			}
 			if (!bet) {
-				return res.status(404).json({ error: "Open bet not found" });
+				return res
+					.status(404)
+					.json({ error: "Bet not found or already resolved" });
 			}
 
 			db.serialize(() => {
@@ -1030,11 +1032,9 @@ app.post("/api/participations", authenticateToken, (req, res) => {
 					}
 
 					if (!bet) {
-						return res
-							.status(400)
-							.json({
-								error: "Bet not found or no longer accepting participants",
-							});
+						return res.status(400).json({
+							error: "Bet not found or no longer accepting participants",
+						});
 					}
 
 					// Check if deadline has passed
