@@ -47,6 +47,7 @@ export default function BetDetails() {
 	const [newTitle, setNewTitle] = useState("");
 	const [deleting, setDeleting] = useState(false);
 	const [reverting, setReverting] = useState(false);
+	const [updatingStatus, setUpdatingStatus] = useState(false);
 
 	useEffect(() => {
 		loadBetDetails();
@@ -306,6 +307,36 @@ export default function BetDetails() {
 		setNewTitle("");
 	};
 
+	const handleStatusUpdate = async (newStatus) => {
+		const statusMessages = {
+			open: "open (allowing new participants)",
+			active: "active (allowing new participants)",
+			in_progress: "in progress (no new participants allowed)",
+			resolved: "resolved",
+		};
+
+		if (
+			!window.confirm(
+				`Are you sure you want to change this bet status to ${statusMessages[newStatus]}?`
+			)
+		) {
+			return;
+		}
+
+		setUpdatingStatus(true);
+		try {
+			await Bet.updateStatus(bet.id, newStatus);
+			await loadBetDetails();
+		} catch (error) {
+			console.error("Error updating status:", error);
+			alert(
+				"Failed to update status: " +
+					(error.message || "Unknown error")
+			);
+		}
+		setUpdatingStatus(false);
+	};
+
 	const isAdminCreator =
 		user && user.role === "admin" && user.email === bet?.created_by;
 
@@ -417,6 +448,52 @@ export default function BetDetails() {
 				{/* Admin Controls */}
 				{isAdminCreator && (
 					<div className="flex items-center gap-2">
+						{/* Status Management */}
+						{bet.status === "open" && (
+							<Button
+								onClick={() =>
+									handleStatusUpdate("in_progress")
+								}
+								disabled={updatingStatus}
+								variant="outline"
+								className="text-orange-400 border-orange-500/50 hover:bg-orange-500/10 hover:text-orange-300"
+							>
+								{updatingStatus
+									? "Updating..."
+									: "Set In Progress"}
+							</Button>
+						)}
+
+						{bet.status === "active" && (
+							<Button
+								onClick={() =>
+									handleStatusUpdate("in_progress")
+								}
+								disabled={updatingStatus}
+								variant="outline"
+								className="text-orange-400 border-orange-500/50 hover:bg-orange-500/10 hover:text-orange-300"
+							>
+								{updatingStatus
+									? "Updating..."
+									: "Set In Progress"}
+							</Button>
+						)}
+
+						{bet.status === "in_progress" && (
+							<Button
+								onClick={() =>
+									handleStatusUpdate("active")
+								}
+								disabled={updatingStatus}
+								variant="outline"
+								className="text-green-400 border-green-500/50 hover:bg-green-500/10 hover:text-green-300"
+							>
+								{updatingStatus
+									? "Updating..."
+									: "Reopen for Participants"}
+							</Button>
+						)}
+
 						{bet.status !== "resolved" && (
 							<Button
 								onClick={() => setIsEditing(!isEditing)}
@@ -692,15 +769,26 @@ export default function BetDetails() {
 														: bet.status ===
 														  "active"
 														? "border-blue-500 text-blue-400"
-														: "border-green-500 text-green-400"
+														: bet.status ===
+														  "in_progress"
+														? "border-orange-500 text-orange-400"
+														: bet.status ===
+														  "resolved"
+														? "border-green-500 text-green-400"
+														: "border-gray-500 text-gray-400"
 												}
 											>
-												{bet.status
-													.charAt(0)
-													.toUpperCase() +
-													bet.status.slice(
-														1
-													)}
+												{bet.status ===
+												"in_progress"
+													? "In Progress"
+													: bet.status
+															.charAt(
+																0
+															)
+															.toUpperCase() +
+													  bet.status.slice(
+															1
+													  )}
 											</Badge>
 										</div>
 									</div>

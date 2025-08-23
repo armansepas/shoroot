@@ -512,6 +512,46 @@ app.post("/api/bets", authenticateToken, (req, res) => {
 	);
 });
 
+// Change bet status endpoint (admin only)
+app.put("/api/bets/:id/status", authenticateToken, (req, res) => {
+	if (req.user.role !== "admin") {
+		return res.status(403).json({ error: "Admin access required" });
+	}
+
+	const { id } = req.params;
+	const { status } = req.body;
+
+	// Valid statuses: open, active, in_progress, resolved
+	const validStatuses = ["open", "active", "in_progress", "resolved"];
+
+	if (!status || !validStatuses.includes(status)) {
+		return res.status(400).json({
+			error:
+				"Invalid status. Valid statuses: " +
+				validStatuses.join(", "),
+		});
+	}
+
+	db.run(
+		"UPDATE bets SET status = ? WHERE id = ?",
+		[status, id],
+		function (err) {
+			if (err) {
+				return res.status(500).json({ error: "Database error" });
+			}
+
+			if (this.changes === 0) {
+				return res.status(404).json({ error: "Bet not found" });
+			}
+
+			res.json({
+				message: `Bet status updated to ${status} successfully`,
+				status: status,
+			});
+		}
+	);
+});
+
 app.put("/api/bets/:id/resolve", authenticateToken, (req, res) => {
 	if (req.user.role !== "admin") {
 		return res.status(403).json({ error: "Admin access required" });
@@ -978,9 +1018,9 @@ app.post("/api/participations", authenticateToken, (req, res) => {
 				return res.status(500).json({ error: "Database error" });
 			}
 
-			// Check if bet exists and is open
+			// Check if bet exists and allows participation (open or active)
 			db.get(
-				'SELECT * FROM bets WHERE id = ? AND status = "open"',
+				'SELECT * FROM bets WHERE id = ? AND status IN ("open", "active")',
 				[bet_id],
 				(err, bet) => {
 					if (err) {
@@ -992,7 +1032,9 @@ app.post("/api/participations", authenticateToken, (req, res) => {
 					if (!bet) {
 						return res
 							.status(400)
-							.json({ error: "Bet not found or not open" });
+							.json({
+								error: "Bet not found or no longer accepting participants",
+							});
 					}
 
 					// Check if deadline has passed

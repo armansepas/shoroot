@@ -166,9 +166,7 @@ export default function RegisterPage() {
 
 						<div className="flex items-center space-x-2 text-sm text-green-600 bg-green-50 p-3 rounded-md">
 							<CheckCircle className="h-4 w-4" />
-							<span>
-								New users start with 1000 credits!
-							</span>
+							<span>New users start with 0 credits!</span>
 						</div>
 					</form>
 				</CardContent>

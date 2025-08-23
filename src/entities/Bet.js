@@ -41,6 +41,10 @@ export class Bet {
 		await apiClient.put(`/bets/${id}/title`, { title });
 	}
 
+	static async updateStatus(id, status) {
+		await apiClient.put(`/bets/${id}/status`, { status });
+	}
+
 	async update(data) {
 		await apiClient.put(`/bets/${this.id}`, data);
 		Object.assign(this, data);

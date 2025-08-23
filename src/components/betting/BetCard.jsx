@@ -41,6 +41,15 @@ export default function BetCard({ bet, user, participation, onUpdate }) {
 						Active
 					</Badge>
 				);
+			case "in_progress":
+				return (
+					<Badge
+						variant="outline"
+						className="border-orange-500 text-orange-400"
+					>
+						In Progress
+					</Badge>
+				);
 			case "resolved":
 				return (
 					<Badge
@@ -139,7 +148,7 @@ export default function BetCard({ bet, user, participation, onUpdate }) {
 	const canPlaceBet =
 		user &&
 		!participation &&
-		bet.status === "open" &&
+		(bet.status === "open" || bet.status === "active") &&
 		!isDeadlinePassed &&
 		user.role !== "admin";
 	const canResolveBet = user?.role === "admin" && bet.status === "open";

@@ -69,6 +69,8 @@ export default function DashboardPage() {
 				return bets.filter((bet) => bet.status === "open");
 			case "active":
 				return bets.filter((bet) => bet.status === "active");
+			case "in_progress":
+				return bets.filter((bet) => bet.status === "in_progress");
 			case "resolved":
 				return bets.filter((bet) => bet.status === "resolved");
 			case "my-bets":
@@ -139,13 +141,16 @@ export default function DashboardPage() {
 				</CardHeader>
 				<CardContent>
 					<Tabs value={activeTab} onValueChange={setActiveTab}>
-						<TabsList className="grid w-full grid-cols-2 lg:grid-cols-5">
+						<TabsList className="grid w-full grid-cols-2 lg:grid-cols-6">
 							<TabsTrigger value="all">
 								All Bets
 							</TabsTrigger>
 							<TabsTrigger value="open">Open</TabsTrigger>
 							<TabsTrigger value="active">
 								Active
+							</TabsTrigger>
+							<TabsTrigger value="in_progress">
+								In Progress
 							</TabsTrigger>
 							<TabsTrigger value="resolved">
 								Resolved
