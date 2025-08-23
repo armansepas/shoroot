@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:3001/api";
+// const API_BASE_URL = "http://localhost:3001/api";
+const API_BASE_URL = "http://172.16.50.250:3001/api";
 
 class APIClient {
 	constructor() {

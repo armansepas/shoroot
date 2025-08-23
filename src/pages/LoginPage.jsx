@@ -52,7 +52,7 @@ export default function LoginPage() {
 						<div className="flex items-center space-x-2">
 							<Trophy className="h-8 w-8 text-yellow-500" />
 							<span className="text-2xl font-bold">
-								BetApp
+								ShorOOt{" "}
 							</span>
 						</div>
 					</div>

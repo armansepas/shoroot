@@ -229,7 +229,11 @@ export default function BetDetails() {
 	};
 
 	const handleDeleteBet = async () => {
-		if (!window.confirm("Are you sure you want to delete this bet? This action cannot be undone and will reverse any credit changes.")) {
+		if (
+			!window.confirm(
+				"Are you sure you want to delete this bet? This action cannot be undone and will reverse any credit changes."
+			)
+		) {
 			return;
 		}
 
@@ -240,13 +244,19 @@ export default function BetDetails() {
 			navigate(createPageUrl("Dashboard"));
 		} catch (error) {
 			console.error("Error deleting bet:", error);
-			alert("Failed to delete bet: " + (error.message || "Unknown error"));
+			alert(
+				"Failed to delete bet: " + (error.message || "Unknown error")
+			);
 		}
 		setDeleting(false);
 	};
 
 	const handleRevertBet = async () => {
-		if (!window.confirm("Are you sure you want to revert this bet back to active status? This will reverse all credit changes.")) {
+		if (
+			!window.confirm(
+				"Are you sure you want to revert this bet back to active status? This will reverse all credit changes."
+			)
+		) {
 			return;
 		}
 
@@ -257,7 +267,9 @@ export default function BetDetails() {
 			alert("Bet reverted successfully");
 		} catch (error) {
 			console.error("Error reverting bet:", error);
-			alert("Failed to revert bet: " + (error.message || "Unknown error"));
+			alert(
+				"Failed to revert bet: " + (error.message || "Unknown error")
+			);
 		}
 		setReverting(false);
 	};
@@ -276,7 +288,10 @@ export default function BetDetails() {
 			setNewTitle("");
 		} catch (error) {
 			console.error("Error updating title:", error);
-			alert("Failed to update title: " + (error.message || "Unknown error"));
+			alert(
+				"Failed to update title: " +
+					(error.message || "Unknown error")
+			);
 		}
 		setLoading(false);
 	};
@@ -345,12 +360,16 @@ export default function BetDetails() {
 							<div className="flex items-center gap-2">
 								<Input
 									value={newTitle}
-									onChange={(e) => setNewTitle(e.target.value)}
+									onChange={(e) =>
+										setNewTitle(e.target.value)
+									}
 									className="bg-gray-700 border-gray-600 text-white text-2xl font-bold"
 									onKeyPress={(e) => {
-										if (e.key === 'Enter') {
+										if (e.key === "Enter") {
 											handleUpdateTitle();
-										} else if (e.key === 'Escape') {
+										} else if (
+											e.key === "Escape"
+										) {
 											cancelTitleEdit();
 										}
 									}}
@@ -394,7 +413,7 @@ export default function BetDetails() {
 						</p>
 					</div>
 				</div>
-				
+
 				{/* Admin Controls */}
 				{isAdminCreator && (
 					<div className="flex items-center gap-2">
@@ -408,7 +427,7 @@ export default function BetDetails() {
 								{isEditing ? "Cancel Edit" : "Edit Bet"}
 							</Button>
 						)}
-						
+
 						{bet.status === "resolved" && (
 							<Button
 								onClick={handleRevertBet}
@@ -416,10 +435,12 @@ export default function BetDetails() {
 								variant="outline"
 								className="text-blue-400 border-blue-500/50 hover:bg-blue-500/10 hover:text-blue-300"
 							>
-								{reverting ? "Reverting..." : "Revert to Active"}
+								{reverting
+									? "Reverting..."
+									: "Revert to Active"}
 							</Button>
 						)}
-						
+
 						<Button
 							onClick={handleDeleteBet}
 							disabled={deleting}

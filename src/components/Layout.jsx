@@ -90,7 +90,7 @@ export default function Layout({ children, currentPageName }) {
 							>
 								<Trophy className="h-8 w-8 text-yellow-500" />
 								<span className="text-xl font-bold text-gray-900">
-									BetApp
+									ShorOOt
 								</span>
 							</Link>
 						</div>

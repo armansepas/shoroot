@@ -146,7 +146,7 @@ db.serialize(() => {
     INSERT OR IGNORE INTO users (email, password, name, role, credits)
     VALUES (?, ?, ?, ?, ?)
   `,
-		[adminEmail, adminPassword, "Admin User", "admin", 10000]
+		[adminEmail, adminPassword, "Admin User", "admin", 0]
 	);
 });
 
@@ -240,7 +240,7 @@ app.post("/api/auth/register", (req, res) => {
 					email,
 					name,
 					role: "user",
-					credits: 1000,
+					credits: 0,
 					status: "active",
 				},
 			});
@@ -656,7 +656,9 @@ app.delete("/api/bets/:id", authenticateToken, (req, res) => {
 				(err, participations) => {
 					if (err) {
 						db.run("ROLLBACK");
-						return res.status(500).json({ error: "Database error" });
+						return res
+							.status(500)
+							.json({ error: "Database error" });
 					}
 
 					// If bet was resolved, reverse credit changes
@@ -680,18 +682,20 @@ app.delete("/api/bets/:id", authenticateToken, (req, res) => {
 						});
 
 						// Apply credit reversals
-						const updatePromises = creditUpdates.map((update) => {
-							return new Promise((resolve, reject) => {
-								db.run(
-									"UPDATE users SET credits = credits + ? WHERE email = ?",
-									[update.amount, update.email],
-									function (err) {
-										if (err) reject(err);
-										else resolve();
-									}
-								);
-							});
-						});
+						const updatePromises = creditUpdates.map(
+							(update) => {
+								return new Promise((resolve, reject) => {
+									db.run(
+										"UPDATE users SET credits = credits + ? WHERE email = ?",
+										[update.amount, update.email],
+										function (err) {
+											if (err) reject(err);
+											else resolve();
+										}
+									);
+								});
+							}
+						);
 
 						Promise.all(updatePromises)
 							.then(() => {
@@ -723,25 +727,33 @@ app.delete("/api/bets/:id", authenticateToken, (req, res) => {
 								}
 
 								// Delete the bet
-								db.run("DELETE FROM bets WHERE id = ?", [id], (err) => {
-									if (err) {
-										db.run("ROLLBACK");
-										return res.status(500).json({
-											error: "Error deleting bet",
+								db.run(
+									"DELETE FROM bets WHERE id = ?",
+									[id],
+									(err) => {
+										if (err) {
+											db.run("ROLLBACK");
+											return res
+												.status(500)
+												.json({
+													error: "Error deleting bet",
+												});
+										}
+
+										db.run("COMMIT", (err) => {
+											if (err) {
+												return res
+													.status(500)
+													.json({
+														error: "Failed to commit transaction",
+													});
+											}
+											res.json({
+												message: "Bet deleted successfully",
+											});
 										});
 									}
-
-									db.run("COMMIT", (err) => {
-										if (err) {
-											return res.status(500).json({
-												error: "Failed to commit transaction",
-											});
-										}
-										res.json({
-											message: "Bet deleted successfully",
-										});
-									});
-								});
+								);
 							}
 						);
 					}
@@ -789,7 +801,9 @@ app.put("/api/bets/:id/revert", authenticateToken, (req, res) => {
 				(err, participations) => {
 					if (err) {
 						db.run("ROLLBACK");
-						return res.status(500).json({ error: "Database error" });
+						return res
+							.status(500)
+							.json({ error: "Database error" });
 					}
 
 					// Reverse credit changes
@@ -846,21 +860,32 @@ app.put("/api/bets/:id/revert", authenticateToken, (req, res) => {
 										(err) => {
 											if (err) {
 												db.run("ROLLBACK");
-												return res.status(500).json({
-													error: "Error updating participations",
-												});
+												return res
+													.status(500)
+													.json({
+														error: "Error updating participations",
+													});
 											}
 
-											db.run("COMMIT", (err) => {
-												if (err) {
-													return res.status(500).json({
-														error: "Failed to commit transaction",
+											db.run(
+												"COMMIT",
+												(err) => {
+													if (err) {
+														return res
+															.status(
+																500
+															)
+															.json(
+																{
+																	error: "Failed to commit transaction",
+																}
+															);
+													}
+													res.json({
+														message: "Bet reverted successfully",
 													});
 												}
-												res.json({
-													message: "Bet reverted successfully",
-												});
-											});
+											);
 										}
 									);
 								}
@@ -891,17 +916,21 @@ app.put("/api/bets/:id/title", authenticateToken, (req, res) => {
 		return res.status(400).json({ error: "Title is required" });
 	}
 
-	db.run("UPDATE bets SET title = ? WHERE id = ?", [title, id], function (err) {
-		if (err) {
-			return res.status(500).json({ error: "Database error" });
-		}
+	db.run(
+		"UPDATE bets SET title = ? WHERE id = ?",
+		[title, id],
+		function (err) {
+			if (err) {
+				return res.status(500).json({ error: "Database error" });
+			}
 
-		if (this.changes === 0) {
-			return res.status(404).json({ error: "Bet not found" });
-		}
+			if (this.changes === 0) {
+				return res.status(404).json({ error: "Bet not found" });
+			}
 
-		res.json({ message: "Bet title updated successfully" });
-	});
+			res.json({ message: "Bet title updated successfully" });
+		}
+	);
 });
 
 app.put("/api/users/reset-credits", authenticateToken, (req, res) => {
@@ -947,12 +976,6 @@ app.post("/api/participations", authenticateToken, (req, res) => {
 		(err, user) => {
 			if (err) {
 				return res.status(500).json({ error: "Database error" });
-			}
-
-			if (!user || user.credits < amount) {
-				return res
-					.status(400)
-					.json({ error: "Insufficient credits" });
 			}
 
 			// Check if bet exists and is open
