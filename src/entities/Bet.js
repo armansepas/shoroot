@@ -24,6 +24,11 @@ export class Bet {
 		await apiClient.put(`/bets/${id}/resolve`, { winning_option });
 	}
 
+	static async update(id, data) {
+		const bet = await apiClient.put(`/bets/${id}`, data);
+		return new Bet(bet);
+	}
+
 	async update(data) {
 		await apiClient.put(`/bets/${this.id}`, data);
 		Object.assign(this, data);

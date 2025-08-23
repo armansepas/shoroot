@@ -320,11 +320,11 @@ export default function BetCard({ bet, user, participation, onUpdate }) {
 				)}
 
 				<div className="pt-2">
-					<Link to={createPageUrl(`BetDetails/${bet.id}`)}>
+					<Link to={createPageUrl(`BetDetails?id=${bet.id}`)}>
 						<Button
 							variant="outline"
 							size="sm"
-							className="w-full"
+							className="w-full bg-blue-900/30 border-blue-600 text-blue-300 hover:bg-blue-800/40 hover:text-blue-200"
 						>
 							<Eye className="h-3 w-3 mr-1" />
 							View Details

@@ -13,6 +13,11 @@ import CreateBetPage from "./pages/CreateBetPage";
 import ManageUsersPage from "./pages/ManageUsersPage";
 import { User } from "./entities/User";
 
+import HeroPage from "./pages/HeroPage";
+import ProfilePage from "./pages/ProfilePage";
+import CreditsPage from "./pages/CreditsPage";
+import BetDetails from "../BetDetails";
+
 // Protected Route component
 function ProtectedRoute({ children, adminOnly = false }) {
 	const [user, setUser] = React.useState(null);
@@ -54,60 +59,75 @@ function ProtectedRoute({ children, adminOnly = false }) {
 	return children;
 }
 
+// App component
 function App() {
 	return (
 		<Router>
-			<div className="App">
-				<Routes>
-					{/* Public routes */}
-					<Route path="/login" element={<LoginPage />} />
-					<Route path="/register" element={<RegisterPage />} />
-
-					{/* Protected routes */}
-					<Route
-						path="/dashboard"
-						element={
+			<Routes>
+				<Route path="/" element={<HeroPage />} />
+				<Route path="/login" element={<LoginPage />} />
+				<Route path="/register" element={<RegisterPage />} />
+				<Route
+					path="/dashboard"
+					element={
+						<ProtectedRoute>
 							<Layout>
 								<DashboardPage />
 							</Layout>
-						}
-					/>
-
-					<Route
-						path="/createbet"
-						element={
-							<ProtectedRoute adminOnly={true}>
-								<Layout>
-									<CreateBetPage />
-								</Layout>
-							</ProtectedRoute>
-						}
-					/>
-
-					<Route
-						path="/manageusers"
-						element={
-							<ProtectedRoute adminOnly={true}>
-								<Layout>
-									<ManageUsersPage />
-								</Layout>
-							</ProtectedRoute>
-						}
-					/>
-
-					{/* Redirect root to dashboard */}
-					<Route
-						path="/"
-						element={<Navigate to="/dashboard" replace />}
-					/>
-
-					{/* Catch all route */}
-					<Route
-						path="*"
-						element={<Navigate to="/dashboard" replace />}
-					/>
-				</Routes>
-			</div>
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/createbet"
+					element={
+						<ProtectedRoute adminOnly={true}>
+							<Layout>
+								<CreateBetPage />
+							</Layout>
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/manageusers"
+					element={
+						<ProtectedRoute adminOnly={true}>
+							<Layout>
+								<ManageUsersPage />
+							</Layout>
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/profile"
+					element={
+						<ProtectedRoute>
+							<Layout>
+								<ProfilePage />
+							</Layout>
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/credits"
+					element={
+						<ProtectedRoute>
+							<Layout>
+								<CreditsPage />
+							</Layout>
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/betdetails"
+					element={
+						<ProtectedRoute>
+							<Layout>
+								<BetDetails />
+							</Layout>
+						</ProtectedRoute>
+					}
+				/>
+			</Routes>
 		</Router>
 	);
 }

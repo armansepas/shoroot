@@ -32,7 +32,7 @@ db.serialize(() => {
       name TEXT NOT NULL,
       role TEXT DEFAULT 'user',
       status TEXT DEFAULT 'active',
-      credits INTEGER DEFAULT 1000,
+      credits INTEGER DEFAULT 0,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
@@ -45,8 +45,7 @@ db.serialize(() => {
       title TEXT NOT NULL,
       description TEXT,
       amount INTEGER NOT NULL,
-      option_a TEXT NOT NULL,
-      option_b TEXT NOT NULL,
+      options TEXT NOT NULL, -- Storing options as a JSON string
       deadline DATETIME NOT NULL,
       status TEXT DEFAULT 'open',
       winning_option TEXT NULL,
@@ -72,6 +71,71 @@ db.serialize(() => {
       UNIQUE(bet_id, user_email)
     )
   `);
+
+	// Migration: Add options column if it doesn't exist (for backward compatibility)
+	db.all("PRAGMA table_info(bets)", (err, columns) => {
+		if (err) {
+			console.error("Error checking table schema:", err);
+			return;
+		}
+
+		const hasOptionsColumn = columns.some((col) => col.name === "options");
+
+		if (!hasOptionsColumn) {
+			console.log("Adding options column to bets table...");
+			db.run("ALTER TABLE bets ADD COLUMN options TEXT", (err) => {
+				if (err) {
+					console.error("Error adding options column:", err);
+				} else {
+					console.log("Options column added successfully");
+
+					// Migrate existing data from option_a and option_b to options
+					db.all(
+						"SELECT id, option_a, option_b FROM bets WHERE options IS NULL",
+						(err, rows) => {
+							if (err) {
+								console.error(
+									"Error fetching existing bets:",
+									err
+								);
+								return;
+							}
+
+							rows.forEach((row) => {
+								const options = [
+									row.option_a,
+									row.option_b,
+								].filter(Boolean);
+								if (options.length > 0) {
+									db.run(
+										"UPDATE bets SET options = ? WHERE id = ?",
+										[
+											JSON.stringify(options),
+											row.id,
+										],
+										(err) => {
+											if (err) {
+												console.error(
+													`Error migrating bet ${row.id}:`,
+													err
+												);
+											}
+										}
+									);
+								}
+							});
+
+							if (rows.length > 0) {
+								console.log(
+									`Migrated ${rows.length} existing bets to new options format`
+								);
+							}
+						}
+					);
+				}
+			});
+		}
+	});
 
 	// Create default admin user
 	const adminEmail = "admin@betting.com";
@@ -254,7 +318,29 @@ app.get("/api/bets", (req, res) => {
 		if (err) {
 			return res.status(500).json({ error: "Database error" });
 		}
-		res.json(bets);
+
+		// Process bets to ensure options are in the correct format
+		const processedBets = bets.map((bet) => {
+			// If options column exists and has data, parse it
+			if (bet.options) {
+				try {
+					bet.options = JSON.parse(bet.options);
+				} catch (e) {
+					// If parsing fails, keep as string
+					console.error(
+						"Error parsing options for bet",
+						bet.id,
+						e
+					);
+				}
+			} else if (bet.option_a || bet.option_b) {
+				// Fallback to old format if options column is empty
+				bet.options = [bet.option_a, bet.option_b].filter(Boolean);
+			}
+			return bet;
+		});
+
+		res.json(processedBets);
 	});
 });
 
@@ -270,24 +356,134 @@ app.get("/api/bets/:id", (req, res) => {
 			return res.status(404).json({ error: "Bet not found" });
 		}
 
+		// Process bet to ensure options are in the correct format
+		if (bet.options) {
+			try {
+				bet.options = JSON.parse(bet.options);
+			} catch (e) {
+				console.error("Error parsing options for bet", bet.id, e);
+			}
+		} else if (bet.option_a || bet.option_b) {
+			// Fallback to old format if options column is empty
+			bet.options = [bet.option_a, bet.option_b].filter(Boolean);
+		}
+
 		res.json(bet);
 	});
 });
 
-app.post("/api/bets", authenticateToken, (req, res) => {
+// Allow admins to edit bet details before it becomes active
+app.put("/api/bets/:id", authenticateToken, (req, res) => {
 	if (req.user.role !== "admin") {
 		return res.status(403).json({ error: "Admin access required" });
 	}
 
-	const { title, description, amount, option_a, option_b, deadline } =
-		req.body;
+	const { id } = req.params;
+	const { title, description, amount, options, deadline } = req.body;
+
+	if (!title || !amount || !options || !deadline) {
+		return res.status(400).json({ error: "All fields are required" });
+	}
+
+	if (!Array.isArray(options) || options.length < 2 || options.length > 5) {
+		return res
+			.status(400)
+			.json({ error: "Options must be an array of 2 to 5 items" });
+	}
+
+	// Can only edit if bet is still open (not active or resolved)
+	db.get(
+		"SELECT * FROM bets WHERE id = ? AND status = 'open'",
+		[id],
+		(err, bet) => {
+			if (err) {
+				return res.status(500).json({ error: "Database error" });
+			}
+
+			if (!bet) {
+				return res.status(404).json({
+					error: "Bet not found or cannot be edited (already active or resolved)",
+				});
+			}
+
+			// For backward compatibility, also update option_a and option_b
+			const option_a = options[0] || "";
+			const option_b = options[1] || "";
+
+			db.run(
+				"UPDATE bets SET title = ?, description = ?, amount = ?, options = ?, option_a = ?, option_b = ?, deadline = ? WHERE id = ?",
+				[
+					title,
+					description,
+					amount,
+					JSON.stringify(options),
+					option_a,
+					option_b,
+					deadline,
+					id,
+				],
+				function (err) {
+					if (err) {
+						return res
+							.status(500)
+							.json({ error: "Database error" });
+					}
+
+					res.json({
+						id: parseInt(id),
+						title,
+						description,
+						amount,
+						options,
+						deadline,
+						status: "open",
+						message: "Bet updated successfully",
+					});
+				}
+			);
+		}
+	);
+});
+
+app.post("/api/bets", authenticateToken, (req, res) => {
+	console.log("Create bet request received:", req.body);
+	console.log("User:", req.user);
+
+	if (req.user.role !== "admin") {
+		return res.status(403).json({ error: "Admin access required" });
+	}
+
+	const { title, description, amount, options, deadline } = req.body;
+
+	console.log("Extracted fields:", {
+		title,
+		description,
+		amount,
+		options,
+		deadline,
+	});
+
+	if (!title || !amount || !options || !deadline) {
+		return res.status(400).json({ error: "All fields are required" });
+	}
+
+	if (!Array.isArray(options) || options.length < 2 || options.length > 5) {
+		return res
+			.status(400)
+			.json({ error: "Options must be an array of 2 to 5 items" });
+	}
+
+	// For backward compatibility, also populate option_a and option_b if they exist in the schema
+	const option_a = options[0] || "";
+	const option_b = options[1] || "";
 
 	db.run(
-		"INSERT INTO bets (title, description, amount, option_a, option_b, deadline, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)",
+		"INSERT INTO bets (title, description, amount, options, option_a, option_b, deadline, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 		[
 			title,
 			description,
 			amount,
+			JSON.stringify(options),
 			option_a,
 			option_b,
 			deadline,
@@ -295,7 +491,11 @@ app.post("/api/bets", authenticateToken, (req, res) => {
 		],
 		function (err) {
 			if (err) {
-				return res.status(500).json({ error: "Database error" });
+				console.error("Database error creating bet:", err);
+				return res.status(500).json({
+					error: "Database error",
+					details: err.message,
+				});
 			}
 
 			res.status(201).json({
@@ -303,8 +503,7 @@ app.post("/api/bets", authenticateToken, (req, res) => {
 				title,
 				description,
 				amount,
-				option_a,
-				option_b,
+				options,
 				deadline,
 				status: "open",
 				created_by: req.user.email,
@@ -321,35 +520,124 @@ app.put("/api/bets/:id/resolve", authenticateToken, (req, res) => {
 	const { id } = req.params;
 	const { winning_option } = req.body;
 
-	db.run(
-		"UPDATE bets SET status = ?, winning_option = ?, resolved_date = CURRENT_TIMESTAMP WHERE id = ?",
-		["resolved", winning_option, id],
-		function (err) {
+	db.get(
+		"SELECT * FROM bets WHERE id = ? AND status = 'open'",
+		[id],
+		(err, bet) => {
 			if (err) {
 				return res.status(500).json({ error: "Database error" });
 			}
-
-			if (this.changes === 0) {
-				return res.status(404).json({ error: "Bet not found" });
+			if (!bet) {
+				return res.status(404).json({ error: "Open bet not found" });
 			}
 
-			// Update participations based on winning option
-			db.run(
-				'UPDATE bet_participations SET status = CASE WHEN choice = ? THEN "won" ELSE "lost" END WHERE bet_id = ?',
-				[winning_option, id],
-				(err) => {
+			db.serialize(() => {
+				db.run("BEGIN TRANSACTION");
+
+				const resolveBetStmt = db.prepare(
+					"UPDATE bets SET status = 'resolved', winning_option = ?, resolved_date = CURRENT_TIMESTAMP WHERE id = ?"
+				);
+				resolveBetStmt.run(winning_option, id, function (err) {
 					if (err) {
+						db.run("ROLLBACK");
+						return res
+							.status(500)
+							.json({ error: "Failed to resolve bet" });
+					}
+				});
+				resolveBetStmt.finalize();
+
+				const updateParticipationsStmt = db.prepare(
+					'UPDATE bet_participations SET status = CASE WHEN choice = ? THEN "won" ELSE "lost" END WHERE bet_id = ?'
+				);
+				updateParticipationsStmt.run(winning_option, id, (err) => {
+					if (err) {
+						db.run("ROLLBACK");
 						console.error(
 							"Error updating participations:",
 							err
 						);
 					}
-				}
-			);
+				});
+				updateParticipationsStmt.finalize();
 
-			res.json({ message: "Bet resolved successfully" });
+				db.all(
+					"SELECT * FROM bet_participations WHERE bet_id = ?",
+					[id],
+					(err, participations) => {
+						if (err) {
+							db.run("ROLLBACK");
+							return res.status(500).json({
+								error: "Database error fetching participations",
+							});
+						}
+
+						const winners = participations.filter(
+							(p) => p.choice === winning_option
+						);
+						const losers = participations.filter(
+							(p) => p.choice !== winning_option
+						);
+
+						const totalLoserAmount = losers.reduce(
+							(sum, p) => sum + p.amount,
+							0
+						);
+
+						if (winners.length > 0) {
+							const winAmountPerWinner =
+								totalLoserAmount / winners.length;
+							winners.forEach((winner) => {
+								const updateUserStmt = db.prepare(
+									"UPDATE users SET credits = credits + ? WHERE email = ?"
+								);
+								updateUserStmt.run(
+									winAmountPerWinner,
+									winner.user_email,
+									(err) => {
+										if (err) {
+											db.run("ROLLBACK");
+											console.error(
+												"Error updating winner credits:",
+												err
+											);
+										}
+									}
+								);
+								updateUserStmt.finalize();
+							});
+						}
+
+						db.run("COMMIT", (err) => {
+							if (err) {
+								return res.status(500).json({
+									error: "Failed to commit transaction",
+								});
+							}
+							res.json({
+								message: "Bet resolved successfully",
+							});
+						});
+					}
+				);
+			});
 		}
 	);
+});
+
+app.put("/api/users/reset-credits", authenticateToken, (req, res) => {
+	if (req.user.role !== "admin") {
+		return res.status(403).json({ error: "Admin access required" });
+	}
+
+	db.run("UPDATE users SET credits = 0 WHERE role = 'user'", function (err) {
+		if (err) {
+			return res.status(500).json({ error: "Database error" });
+		}
+		res.json({
+			message: `Successfully reset credits for ${this.changes} users.`,
+		});
+	});
 });
 
 // Bet participations routes
@@ -423,11 +711,9 @@ app.post("/api/participations", authenticateToken, (req, res) => {
 										"UNIQUE constraint failed"
 									)
 								) {
-									return res
-										.status(400)
-										.json({
-											error: "You have already participated in this bet",
-										});
+									return res.status(400).json({
+										error: "You have already participated in this bet",
+									});
 								}
 								return res
 									.status(500)
@@ -448,6 +734,36 @@ app.post("/api/participations", authenticateToken, (req, res) => {
 								}
 							);
 
+							// Check if this bet now has 2 or more participations and update status to active if needed
+							db.get(
+								"SELECT COUNT(*) as count FROM bet_participations WHERE bet_id = ?",
+								[bet_id],
+								(err, result) => {
+									if (err) {
+										console.error(
+											"Error counting participations:",
+											err
+										);
+										return;
+									}
+
+									if (result.count >= 2) {
+										db.run(
+											"UPDATE bets SET status = 'active' WHERE id = ? AND status = 'open'",
+											[bet_id],
+											(err) => {
+												if (err) {
+													console.error(
+														"Error updating bet status:",
+														err
+													);
+												}
+											}
+										);
+									}
+								}
+							);
+
 							res.status(201).json({
 								id: this.lastID,
 								bet_id,
@@ -463,7 +779,6 @@ app.post("/api/participations", authenticateToken, (req, res) => {
 		}
 	);
 });
-
 app.listen(PORT, () => {
 	console.log(`Server running on http://localhost:${PORT}`);
 });

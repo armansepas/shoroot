@@ -14,8 +14,8 @@ import {
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
+} from "./src/components/ui/select";
+import { Checkbox } from "./src/components/ui/checkbox";
 import {
 	ArrowLeft,
 	Trophy,
@@ -50,9 +50,19 @@ export default function BetDetails() {
 
 	useEffect(() => {
 		if (bet) {
+			// Initialize with options array if available, or convert from legacy format
+			let options = bet.options;
+			if (!options || !Array.isArray(options)) {
+				// Convert from old option_a/option_b format
+				options = [];
+				if (bet.option_a) options.push(bet.option_a);
+				if (bet.option_b) options.push(bet.option_b);
+			}
+
 			setEditableBet({
 				...bet,
 				assigned_users: bet.assigned_users || [],
+				options: options.length ? options : ["", ""], // Ensure at least 2 options
 			});
 		}
 	}, [bet]);
@@ -78,9 +88,9 @@ export default function BetDetails() {
 			const [betData, participationsData, usersData] =
 				await Promise.all([
 					Bet.list().then((bets) =>
-						bets.find((b) => b.id === betId)
+						bets.find((b) => b.id === parseInt(betId))
 					),
-					BetParticipation.filter({ bet_id: betId }),
+					BetParticipation.filter({ bet_id: parseInt(betId) }),
 					User.list(),
 				]);
 
@@ -112,12 +122,32 @@ export default function BetDetails() {
 	const handleSaveChanges = async () => {
 		setLoading(true);
 		try {
+			// Validate options
+			if (!editableBet.options || editableBet.options.length < 2) {
+				alert("At least 2 options are required");
+				setLoading(false);
+				return;
+			}
+
+			// Check for empty options
+			if (editableBet.options.some((opt) => !opt.trim())) {
+				alert("All options must have content");
+				setLoading(false);
+				return;
+			}
+
 			const { id, ...updateData } = editableBet;
+
+			// Use the static update method for admin edits
 			await Bet.update(id, updateData);
 			setIsEditing(false);
 			await loadBetDetails();
 		} catch (error) {
 			console.error("Failed to save changes:", error);
+			alert(
+				"Failed to save changes: " +
+					(error.message || "Unknown error")
+			);
 		}
 		setLoading(false);
 	};
@@ -325,33 +355,93 @@ export default function BetDetails() {
 								</div>
 								<div>
 									<Label className="text-gray-300">
-										Option A
+										Options (2-5 options)
 									</Label>
-									<Input
-										value={editableBet.option_a}
-										onChange={(e) =>
-											handleInputChange(
-												"option_a",
-												e.target.value
-											)
-										}
-										className="bg-gray-700 border-gray-600 text-white"
-									/>
-								</div>
-								<div>
-									<Label className="text-gray-300">
-										Option B
-									</Label>
-									<Input
-										value={editableBet.option_b}
-										onChange={(e) =>
-											handleInputChange(
-												"option_b",
-												e.target.value
-											)
-										}
-										className="bg-gray-700 border-gray-600 text-white"
-									/>
+									<div className="space-y-3 mt-2">
+										{(editableBet.options &&
+										Array.isArray(
+											editableBet.options
+										)
+											? editableBet.options
+											: []
+										).map((option, index) => (
+											<div
+												key={index}
+												className="flex gap-2"
+											>
+												<Input
+													value={option}
+													onChange={(
+														e
+													) => {
+														const newOptions =
+															[
+																...editableBet.options,
+															];
+														newOptions[
+															index
+														] =
+															e.target.value;
+														handleInputChange(
+															"options",
+															newOptions
+														);
+													}}
+													className="bg-gray-700 border-gray-600 text-white"
+													placeholder={`Option ${
+														index + 1
+													}`}
+												/>
+												{editableBet.options
+													.length > 2 && (
+													<Button
+														type="button"
+														variant="destructive"
+														size="icon"
+														onClick={() => {
+															const newOptions =
+																[
+																	...editableBet.options,
+																];
+															newOptions.splice(
+																index,
+																1
+															);
+															handleInputChange(
+																"options",
+																newOptions
+															);
+														}}
+														className="bg-red-600 hover:bg-red-700"
+													>
+														<XCircle className="w-4 h-4" />
+													</Button>
+												)}
+											</div>
+										))}
+
+										{editableBet.options &&
+											editableBet.options
+												.length < 5 && (
+												<Button
+													type="button"
+													variant="outline"
+													onClick={() => {
+														handleInputChange(
+															"options",
+															[
+																...(editableBet.options ||
+																	[]),
+																"",
+															]
+														);
+													}}
+													className="mt-2 border-gray-600 text-gray-300 hover:text-white w-full"
+												>
+													Add Option
+												</Button>
+											)}
+									</div>
 								</div>
 
 								<div>
@@ -497,52 +587,105 @@ export default function BetDetails() {
 								</CardTitle>
 							</CardHeader>
 							<CardContent>
-								<div className="grid md:grid-cols-2 gap-4">
-									<div
-										className={`p-4 rounded-xl border-2 ${
-											bet.result === "option_a"
-												? "border-green-500 bg-green-500/10"
-												: "border-gray-600 bg-gray-700/30"
-										}`}
-									>
-										<h4 className="font-semibold text-white mb-1">
-											Option A
-										</h4>
-										<p className="text-gray-300">
-											{bet.option_a}
-										</p>
-										{bet.result === "option_a" && (
-											<div className="mt-2 flex items-center gap-1 text-green-400">
-												<CheckCircle2 className="w-4 h-4" />
-												<span className="text-sm font-semibold">
-													Winner
-												</span>
-											</div>
-										)}
-									</div>
+								<div
+									className={`grid ${
+										bet.options?.length > 2
+											? "grid-cols-1"
+											: "md:grid-cols-2"
+									} gap-4`}
+								>
+									{(bet.options &&
+									Array.isArray(bet.options)
+										? bet.options
+										: []
+									).map((option, index) => (
+										<div
+											key={index}
+											className={`p-4 rounded-xl border-2 ${
+												bet.result ===
+												`option_${index}`
+													? "border-green-500 bg-green-500/10"
+													: "border-gray-600 bg-gray-700/30"
+											}`}
+										>
+											<h4 className="font-semibold text-white mb-1">
+												Option{" "}
+												{String.fromCharCode(
+													65 + index
+												)}
+											</h4>
+											<p className="text-gray-300">
+												{option}
+											</p>
+											{bet.result ===
+												`option_${index}` && (
+												<div className="mt-2 flex items-center gap-1 text-green-400">
+													<CheckCircle2 className="w-4 h-4" />
+													<span className="text-sm font-semibold">
+														Winner
+													</span>
+												</div>
+											)}
+										</div>
+									))}
 
-									<div
-										className={`p-4 rounded-xl border-2 ${
-											bet.result === "option_b"
-												? "border-green-500 bg-green-500/10"
-												: "border-gray-600 bg-gray-700/30"
-										}`}
-									>
-										<h4 className="font-semibold text-white mb-1">
-											Option B
-										</h4>
-										<p className="text-gray-300">
-											{bet.option_b}
-										</p>
-										{bet.result === "option_b" && (
-											<div className="mt-2 flex items-center gap-1 text-green-400">
-												<CheckCircle2 className="w-4 h-4" />
-												<span className="text-sm font-semibold">
-													Winner
-												</span>
+									{/* Fallback for legacy bets with option_a/option_b format */}
+									{(!bet.options ||
+										!Array.isArray(
+											bet.options
+										)) && (
+										<>
+											<div
+												className={`p-4 rounded-xl border-2 ${
+													bet.result ===
+													"option_a"
+														? "border-green-500 bg-green-500/10"
+														: "border-gray-600 bg-gray-700/30"
+												}`}
+											>
+												<h4 className="font-semibold text-white mb-1">
+													Option A
+												</h4>
+												<p className="text-gray-300">
+													{bet.option_a}
+												</p>
+												{bet.result ===
+													"option_a" && (
+													<div className="mt-2 flex items-center gap-1 text-green-400">
+														<CheckCircle2 className="w-4 h-4" />
+														<span className="text-sm font-semibold">
+															Winner
+														</span>
+													</div>
+												)}
 											</div>
-										)}
-									</div>
+
+											<div
+												className={`p-4 rounded-xl border-2 ${
+													bet.result ===
+													"option_b"
+														? "border-green-500 bg-green-500/10"
+														: "border-gray-600 bg-gray-700/30"
+												}`}
+											>
+												<h4 className="font-semibold text-white mb-1">
+													Option B
+												</h4>
+												<p className="text-gray-300">
+													{bet.option_b}
+												</p>
+												{bet.result ===
+													"option_b" && (
+													<div className="mt-2 flex items-center gap-1 text-green-400">
+														<CheckCircle2 className="w-4 h-4" />
+														<span className="text-sm font-semibold">
+															Winner
+														</span>
+													</div>
+												)}
+											</div>
+										</>
+									)}
 								</div>
 							</CardContent>
 						</Card>
@@ -649,12 +792,47 @@ export default function BetDetails() {
 											<SelectValue placeholder="Choose winning option" />
 										</SelectTrigger>
 										<SelectContent>
-											<SelectItem value="option_a">
-												{bet.option_a}
-											</SelectItem>
-											<SelectItem value="option_b">
-												{bet.option_b}
-											</SelectItem>
+											{bet.options &&
+											Array.isArray(
+												bet.options
+											) ? (
+												bet.options.map(
+													(
+														option,
+														index
+													) => (
+														<SelectItem
+															key={
+																index
+															}
+															value={`option_${index}`}
+														>
+															Option{" "}
+															{String.fromCharCode(
+																65 +
+																	index
+															)}
+															:{" "}
+															{
+																option
+															}
+														</SelectItem>
+													)
+												)
+											) : (
+												<>
+													<SelectItem value="option_a">
+														{
+															bet.option_a
+														}
+													</SelectItem>
+													<SelectItem value="option_b">
+														{
+															bet.option_b
+														}
+													</SelectItem>
+												</>
+											)}
 										</SelectContent>
 									</Select>
 								</div>

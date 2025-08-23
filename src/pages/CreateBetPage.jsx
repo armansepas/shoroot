@@ -16,8 +16,7 @@ export default function CreateBetPage() {
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
 	const [amount, setAmount] = useState("");
-	const [optionA, setOptionA] = useState("");
-	const [optionB, setOptionB] = useState("");
+	const [options, setOptions] = useState(["", ""]); // Start with 2 empty options
 	const [deadline, setDeadline] = useState("");
 	const [allUsers, setAllUsers] = useState([]);
 	const [assignedUsers, setAssignedUsers] = useState([]);
@@ -46,13 +45,26 @@ export default function CreateBetPage() {
 		setLoading(true);
 
 		try {
-			// Create bet
+			// Validate options
+			if (options.length < 2) {
+				alert("At least 2 options are required");
+				setLoading(false);
+				return;
+			}
+
+			// Check for empty options
+			if (options.some((opt) => !opt.trim())) {
+				alert("All options must have content");
+				setLoading(false);
+				return;
+			}
+
+			// Create bet with options array format
 			const betData = {
 				title,
 				description,
 				amount: parseInt(amount),
-				option_a: optionA,
-				option_b: optionB,
+				options: options.filter((opt) => opt.trim()), // Filter out empty options
 				deadline,
 			};
 
@@ -67,7 +79,6 @@ export default function CreateBetPage() {
 			setLoading(false);
 		}
 	};
-
 	const handleGoBack = () => {
 		navigate(createPageUrl("Dashboard"));
 	};
@@ -151,30 +162,72 @@ export default function CreateBetPage() {
 							/>
 						</div>
 
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-							<div>
-								<Label htmlFor="optionA">Option A</Label>
-								<Input
-									id="optionA"
-									value={optionA}
-									onChange={(e) =>
-										setOptionA(e.target.value)
-									}
-									placeholder="First betting option"
-									required
-								/>
-							</div>
-							<div>
-								<Label htmlFor="optionB">Option B</Label>
-								<Input
-									id="optionB"
-									value={optionB}
-									onChange={(e) =>
-										setOptionB(e.target.value)
-									}
-									placeholder="Second betting option"
-									required
-								/>
+						<div>
+							<Label>Betting Options (2-5 options)</Label>
+							<div className="space-y-3 mt-2">
+								{options.map((option, index) => (
+									<div
+										key={index}
+										className="flex gap-2"
+									>
+										<Input
+											value={option}
+											onChange={(e) => {
+												const newOptions = [
+													...options,
+												];
+												newOptions[index] =
+													e.target.value;
+												setOptions(
+													newOptions
+												);
+											}}
+											placeholder={`Option ${
+												index + 1
+											}`}
+											required
+										/>
+										{options.length > 2 && (
+											<Button
+												type="button"
+												variant="destructive"
+												size="icon"
+												onClick={() => {
+													const newOptions =
+														[
+															...options,
+														];
+													newOptions.splice(
+														index,
+														1
+													);
+													setOptions(
+														newOptions
+													);
+												}}
+											>
+												<X className="w-4 h-4" />
+											</Button>
+										)}
+									</div>
+								))}
+
+								{options.length < 5 && (
+									<Button
+										type="button"
+										variant="outline"
+										onClick={() => {
+											setOptions([
+												...options,
+												"",
+											]);
+										}}
+										className="w-full"
+									>
+										<PlusCircle className="w-4 h-4 mr-2" />
+										Add Option
+									</Button>
+								)}
 							</div>
 						</div>
 
