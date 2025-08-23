@@ -625,6 +625,285 @@ app.put("/api/bets/:id/resolve", authenticateToken, (req, res) => {
 	);
 });
 
+// Delete bet endpoint
+app.delete("/api/bets/:id", authenticateToken, (req, res) => {
+	if (req.user.role !== "admin") {
+		return res.status(403).json({ error: "Admin access required" });
+	}
+
+	const { id } = req.params;
+
+	// Start transaction to handle credit reversals
+	db.serialize(() => {
+		db.run("BEGIN TRANSACTION");
+
+		// First, get the bet details and all participations
+		db.get("SELECT * FROM bets WHERE id = ?", [id], (err, bet) => {
+			if (err) {
+				db.run("ROLLBACK");
+				return res.status(500).json({ error: "Database error" });
+			}
+
+			if (!bet) {
+				db.run("ROLLBACK");
+				return res.status(404).json({ error: "Bet not found" });
+			}
+
+			// Get all participations for this bet
+			db.all(
+				"SELECT * FROM bet_participations WHERE bet_id = ?",
+				[id],
+				(err, participations) => {
+					if (err) {
+						db.run("ROLLBACK");
+						return res.status(500).json({ error: "Database error" });
+					}
+
+					// If bet was resolved, reverse credit changes
+					if (bet.status === "resolved") {
+						const creditUpdates = [];
+
+						participations.forEach((participation) => {
+							if (participation.status === "won") {
+								// Remove winnings from user credits
+								creditUpdates.push({
+									email: participation.user_email,
+									amount: -bet.amount,
+								});
+							} else if (participation.status === "lost") {
+								// Return lost amount to user credits
+								creditUpdates.push({
+									email: participation.user_email,
+									amount: bet.amount,
+								});
+							}
+						});
+
+						// Apply credit reversals
+						const updatePromises = creditUpdates.map((update) => {
+							return new Promise((resolve, reject) => {
+								db.run(
+									"UPDATE users SET credits = credits + ? WHERE email = ?",
+									[update.amount, update.email],
+									function (err) {
+										if (err) reject(err);
+										else resolve();
+									}
+								);
+							});
+						});
+
+						Promise.all(updatePromises)
+							.then(() => {
+								// Delete participations and bet
+								deleteBetAndParticipations();
+							})
+							.catch((err) => {
+								db.run("ROLLBACK");
+								return res.status(500).json({
+									error: "Error reversing credits",
+								});
+							});
+					} else {
+						// Bet not resolved, just delete
+						deleteBetAndParticipations();
+					}
+
+					function deleteBetAndParticipations() {
+						// Delete participations first
+						db.run(
+							"DELETE FROM bet_participations WHERE bet_id = ?",
+							[id],
+							(err) => {
+								if (err) {
+									db.run("ROLLBACK");
+									return res.status(500).json({
+										error: "Error deleting participations",
+									});
+								}
+
+								// Delete the bet
+								db.run("DELETE FROM bets WHERE id = ?", [id], (err) => {
+									if (err) {
+										db.run("ROLLBACK");
+										return res.status(500).json({
+											error: "Error deleting bet",
+										});
+									}
+
+									db.run("COMMIT", (err) => {
+										if (err) {
+											return res.status(500).json({
+												error: "Failed to commit transaction",
+											});
+										}
+										res.json({
+											message: "Bet deleted successfully",
+										});
+									});
+								});
+							}
+						);
+					}
+				}
+			);
+		});
+	});
+});
+
+// Revert resolved bet back to unknown state
+app.put("/api/bets/:id/revert", authenticateToken, (req, res) => {
+	if (req.user.role !== "admin") {
+		return res.status(403).json({ error: "Admin access required" });
+	}
+
+	const { id } = req.params;
+
+	// Start transaction to handle credit reversals
+	db.serialize(() => {
+		db.run("BEGIN TRANSACTION");
+
+		// Get the bet details
+		db.get("SELECT * FROM bets WHERE id = ?", [id], (err, bet) => {
+			if (err) {
+				db.run("ROLLBACK");
+				return res.status(500).json({ error: "Database error" });
+			}
+
+			if (!bet) {
+				db.run("ROLLBACK");
+				return res.status(404).json({ error: "Bet not found" });
+			}
+
+			if (bet.status !== "resolved") {
+				db.run("ROLLBACK");
+				return res.status(400).json({
+					error: "Only resolved bets can be reverted",
+				});
+			}
+
+			// Get all participations for this bet
+			db.all(
+				"SELECT * FROM bet_participations WHERE bet_id = ?",
+				[id],
+				(err, participations) => {
+					if (err) {
+						db.run("ROLLBACK");
+						return res.status(500).json({ error: "Database error" });
+					}
+
+					// Reverse credit changes
+					const creditUpdates = [];
+
+					participations.forEach((participation) => {
+						if (participation.status === "won") {
+							// Remove winnings from user credits
+							creditUpdates.push({
+								email: participation.user_email,
+								amount: -bet.amount,
+							});
+						} else if (participation.status === "lost") {
+							// Return lost amount to user credits
+							creditUpdates.push({
+								email: participation.user_email,
+								amount: bet.amount,
+							});
+						}
+					});
+
+					// Apply credit reversals
+					const updatePromises = creditUpdates.map((update) => {
+						return new Promise((resolve, reject) => {
+							db.run(
+								"UPDATE users SET credits = credits + ? WHERE email = ?",
+								[update.amount, update.email],
+								function (err) {
+									if (err) reject(err);
+									else resolve();
+								}
+							);
+						});
+					});
+
+					Promise.all(updatePromises)
+						.then(() => {
+							// Reset bet status and participations
+							db.run(
+								"UPDATE bets SET status = 'active', winning_option = NULL, resolved_date = NULL WHERE id = ?",
+								[id],
+								(err) => {
+									if (err) {
+										db.run("ROLLBACK");
+										return res.status(500).json({
+											error: "Error updating bet status",
+										});
+									}
+
+									// Reset all participations to accepted status
+									db.run(
+										"UPDATE bet_participations SET status = 'accepted' WHERE bet_id = ?",
+										[id],
+										(err) => {
+											if (err) {
+												db.run("ROLLBACK");
+												return res.status(500).json({
+													error: "Error updating participations",
+												});
+											}
+
+											db.run("COMMIT", (err) => {
+												if (err) {
+													return res.status(500).json({
+														error: "Failed to commit transaction",
+													});
+												}
+												res.json({
+													message: "Bet reverted successfully",
+												});
+											});
+										}
+									);
+								}
+							);
+						})
+						.catch((err) => {
+							db.run("ROLLBACK");
+							return res.status(500).json({
+								error: "Error reversing credits",
+							});
+						});
+				}
+			);
+		});
+	});
+});
+
+// Simple bet title update endpoint (for basic details only)
+app.put("/api/bets/:id/title", authenticateToken, (req, res) => {
+	if (req.user.role !== "admin") {
+		return res.status(403).json({ error: "Admin access required" });
+	}
+
+	const { id } = req.params;
+	const { title } = req.body;
+
+	if (!title || !title.trim()) {
+		return res.status(400).json({ error: "Title is required" });
+	}
+
+	db.run("UPDATE bets SET title = ? WHERE id = ?", [title, id], function (err) {
+		if (err) {
+			return res.status(500).json({ error: "Database error" });
+		}
+
+		if (this.changes === 0) {
+			return res.status(404).json({ error: "Bet not found" });
+		}
+
+		res.json({ message: "Bet title updated successfully" });
+	});
+});
+
 app.put("/api/users/reset-credits", authenticateToken, (req, res) => {
 	if (req.user.role !== "admin") {
 		return res.status(403).json({ error: "Admin access required" });

@@ -29,8 +29,28 @@ export class Bet {
 		return new Bet(bet);
 	}
 
+	static async delete(id) {
+		await apiClient.delete(`/bets/${id}`);
+	}
+
+	static async revert(id) {
+		await apiClient.put(`/bets/${id}/revert`);
+	}
+
+	static async updateTitle(id, title) {
+		await apiClient.put(`/bets/${id}/title`, { title });
+	}
+
 	async update(data) {
 		await apiClient.put(`/bets/${this.id}`, data);
 		Object.assign(this, data);
+	}
+
+	async delete() {
+		await apiClient.delete(`/bets/${this.id}`);
+	}
+
+	async revert() {
+		await apiClient.put(`/bets/${this.id}/revert`);
 	}
 }

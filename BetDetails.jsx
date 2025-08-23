@@ -43,6 +43,10 @@ export default function BetDetails() {
 	const [isEditing, setIsEditing] = useState(false);
 	const [editableBet, setEditableBet] = useState(null);
 	const [allUsers, setAllUsers] = useState([]);
+	const [isEditingTitle, setIsEditingTitle] = useState(false);
+	const [newTitle, setNewTitle] = useState("");
+	const [deleting, setDeleting] = useState(false);
+	const [reverting, setReverting] = useState(false);
 
 	useEffect(() => {
 		loadBetDetails();
@@ -224,6 +228,69 @@ export default function BetDetails() {
 		setResolving(false);
 	};
 
+	const handleDeleteBet = async () => {
+		if (!window.confirm("Are you sure you want to delete this bet? This action cannot be undone and will reverse any credit changes.")) {
+			return;
+		}
+
+		setDeleting(true);
+		try {
+			await Bet.delete(bet.id);
+			alert("Bet deleted successfully");
+			navigate(createPageUrl("Dashboard"));
+		} catch (error) {
+			console.error("Error deleting bet:", error);
+			alert("Failed to delete bet: " + (error.message || "Unknown error"));
+		}
+		setDeleting(false);
+	};
+
+	const handleRevertBet = async () => {
+		if (!window.confirm("Are you sure you want to revert this bet back to active status? This will reverse all credit changes.")) {
+			return;
+		}
+
+		setReverting(true);
+		try {
+			await Bet.revert(bet.id);
+			await loadBetDetails();
+			alert("Bet reverted successfully");
+		} catch (error) {
+			console.error("Error reverting bet:", error);
+			alert("Failed to revert bet: " + (error.message || "Unknown error"));
+		}
+		setReverting(false);
+	};
+
+	const handleUpdateTitle = async () => {
+		if (!newTitle.trim()) {
+			alert("Title cannot be empty");
+			return;
+		}
+
+		setLoading(true);
+		try {
+			await Bet.updateTitle(bet.id, newTitle);
+			await loadBetDetails();
+			setIsEditingTitle(false);
+			setNewTitle("");
+		} catch (error) {
+			console.error("Error updating title:", error);
+			alert("Failed to update title: " + (error.message || "Unknown error"));
+		}
+		setLoading(false);
+	};
+
+	const startTitleEdit = () => {
+		setNewTitle(bet.title);
+		setIsEditingTitle(true);
+	};
+
+	const cancelTitleEdit = () => {
+		setIsEditingTitle(false);
+		setNewTitle("");
+	};
+
 	const isAdminCreator =
 		user && user.role === "admin" && user.email === bet?.created_by;
 
@@ -274,23 +341,94 @@ export default function BetDetails() {
 						<ArrowLeft className="w-4 h-4" />
 					</Button>
 					<div>
-						<h1 className="text-3xl font-bold text-white">
-							{bet.title}
-						</h1>
+						{isEditingTitle ? (
+							<div className="flex items-center gap-2">
+								<Input
+									value={newTitle}
+									onChange={(e) => setNewTitle(e.target.value)}
+									className="bg-gray-700 border-gray-600 text-white text-2xl font-bold"
+									onKeyPress={(e) => {
+										if (e.key === 'Enter') {
+											handleUpdateTitle();
+										} else if (e.key === 'Escape') {
+											cancelTitleEdit();
+										}
+									}}
+								/>
+								<Button
+									onClick={handleUpdateTitle}
+									disabled={loading}
+									size="sm"
+									className="bg-green-600 hover:bg-green-700"
+								>
+									<Save className="w-4 h-4" />
+								</Button>
+								<Button
+									onClick={cancelTitleEdit}
+									size="sm"
+									variant="outline"
+									className="border-gray-600"
+								>
+									<XCircle className="w-4 h-4" />
+								</Button>
+							</div>
+						) : (
+							<div className="flex items-center gap-2">
+								<h1 className="text-3xl font-bold text-white">
+									{bet.title}
+								</h1>
+								{isAdminCreator && (
+									<Button
+										onClick={startTitleEdit}
+										variant="ghost"
+										size="sm"
+										className="text-gray-400 hover:text-yellow-400"
+									>
+										<Edit className="w-4 h-4" />
+									</Button>
+								)}
+							</div>
+						)}
 						<p className="text-gray-400">
 							Detailed view and management
 						</p>
 					</div>
 				</div>
-				{isAdminCreator && bet.status !== "resolved" && (
-					<Button
-						onClick={() => setIsEditing(!isEditing)}
-						variant="outline"
-						className="text-yellow-400 border-yellow-500/50 hover:bg-yellow-500/10 hover:text-yellow-300"
-					>
-						<Edit className="w-4 h-4 mr-2" />
-						{isEditing ? "Cancel Edit" : "Edit Bet"}
-					</Button>
+				
+				{/* Admin Controls */}
+				{isAdminCreator && (
+					<div className="flex items-center gap-2">
+						{bet.status !== "resolved" && (
+							<Button
+								onClick={() => setIsEditing(!isEditing)}
+								variant="outline"
+								className="text-yellow-400 border-yellow-500/50 hover:bg-yellow-500/10 hover:text-yellow-300"
+							>
+								<Edit className="w-4 h-4 mr-2" />
+								{isEditing ? "Cancel Edit" : "Edit Bet"}
+							</Button>
+						)}
+						
+						{bet.status === "resolved" && (
+							<Button
+								onClick={handleRevertBet}
+								disabled={reverting}
+								variant="outline"
+								className="text-blue-400 border-blue-500/50 hover:bg-blue-500/10 hover:text-blue-300"
+							>
+								{reverting ? "Reverting..." : "Revert to Active"}
+							</Button>
+						)}
+						
+						<Button
+							onClick={handleDeleteBet}
+							disabled={deleting}
+							variant="destructive"
+							className="bg-red-600 hover:bg-red-700"
+						>
+							{deleting ? "Deleting..." : "Delete Bet"}
+						</Button>
+					</div>
 				)}
 			</div>
 
