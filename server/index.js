@@ -17,6 +17,9 @@ const JWT_SECRET = "your-secret-key-change-this-in-production";
 app.use(cors());
 app.use(express.json());
 
+// Serve static files from the 'dist' directory
+app.use(express.static("dist"));
+
 // Database setup
 const dbPath = path.join(__dirname, "betting.db");
 const db = new Database.Database(dbPath);
@@ -573,13 +576,40 @@ app.put("/api/bets/:id/resolve", authenticateToken, (req, res) => {
 					.json({ error: "Bet not found or already resolved" });
 			}
 
+			// Parse options
+			let options = [];
+			if (bet.options) {
+				try {
+					options = JSON.parse(bet.options);
+				} catch (e) {
+					options = [bet.option_a, bet.option_b].filter(Boolean);
+				}
+			} else {
+				options = [bet.option_a, bet.option_b].filter(Boolean);
+			}
+
+			// Convert winning_option from index string to actual option text
+			const match = winning_option.match(/^option_(\d+)$/);
+			if (!match) {
+				return res
+					.status(400)
+					.json({ error: "Invalid winning_option format" });
+			}
+			const index = parseInt(match[1], 10);
+			if (index >= options.length) {
+				return res
+					.status(400)
+					.json({ error: "Winning option index out of range" });
+			}
+			const actualWinningOption = options[index];
+
 			db.serialize(() => {
 				db.run("BEGIN TRANSACTION");
 
 				const resolveBetStmt = db.prepare(
 					"UPDATE bets SET status = 'resolved', winning_option = ?, resolved_date = CURRENT_TIMESTAMP WHERE id = ?"
 				);
-				resolveBetStmt.run(winning_option, id, function (err) {
+				resolveBetStmt.run(actualWinningOption, id, function (err) {
 					if (err) {
 						db.run("ROLLBACK");
 						return res
@@ -592,15 +622,19 @@ app.put("/api/bets/:id/resolve", authenticateToken, (req, res) => {
 				const updateParticipationsStmt = db.prepare(
 					'UPDATE bet_participations SET status = CASE WHEN choice = ? THEN "won" ELSE "lost" END WHERE bet_id = ?'
 				);
-				updateParticipationsStmt.run(winning_option, id, (err) => {
-					if (err) {
-						db.run("ROLLBACK");
-						console.error(
-							"Error updating participations:",
-							err
-						);
+				updateParticipationsStmt.run(
+					actualWinningOption,
+					id,
+					(err) => {
+						if (err) {
+							db.run("ROLLBACK");
+							console.error(
+								"Error updating participations:",
+								err
+							);
+						}
 					}
-				});
+				);
 				updateParticipationsStmt.finalize();
 
 				db.all(
@@ -615,10 +649,10 @@ app.put("/api/bets/:id/resolve", authenticateToken, (req, res) => {
 						}
 
 						const winners = participations.filter(
-							(p) => p.choice === winning_option
+							(p) => p.choice === actualWinningOption
 						);
 						const losers = participations.filter(
-							(p) => p.choice !== winning_option
+							(p) => p.choice !== actualWinningOption
 						);
 
 						const totalLoserAmount = losers.reduce(
@@ -1123,6 +1157,12 @@ app.post("/api/participations", authenticateToken, (req, res) => {
 		}
 	);
 });
+
+// Catch-all handler: send back React's index.html file for client-side routing
+app.get("*", (req, res) => {
+	res.sendFile(path.join(__dirname, "dist", "index.html"));
+});
+
 app.listen(PORT, () => {
 	console.log(`Server running on http://localhost:${PORT}`);
 });
