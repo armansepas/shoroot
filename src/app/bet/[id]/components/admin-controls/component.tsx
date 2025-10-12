@@ -76,9 +76,18 @@ export function AdminControls({ betId }: AdminControlsProps) {
 
     setLoading(true);
     try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Authentication required");
+        return;
+      }
+
       const response = await fetch(`/api/bets/${betId}/edit`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           title: editForm.title.trim(),
           description: editForm.description.trim(),
@@ -116,9 +125,18 @@ export function AdminControls({ betId }: AdminControlsProps) {
 
     setLoading(true);
     try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Authentication required");
+        return;
+      }
+
       const response = await fetch(`/api/bets/${betId}/status`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           status: newStatus,
           winningOption: newStatus === "resolved" ? winningOption : null,
@@ -152,8 +170,17 @@ export function AdminControls({ betId }: AdminControlsProps) {
 
     setLoading(true);
     try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Authentication required");
+        return;
+      }
+
       const response = await fetch(`/api/bets/${betId}/delete`, {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (response.ok) {
@@ -178,9 +205,18 @@ export function AdminControls({ betId }: AdminControlsProps) {
 
     setLoading(true);
     try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Authentication required");
+        return;
+      }
+
       const response = await fetch(`/api/bets/${betId}/remove-participation`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ participationId }),
       });
 
