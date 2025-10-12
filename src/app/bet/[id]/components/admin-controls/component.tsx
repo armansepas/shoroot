@@ -70,7 +70,7 @@ export function AdminControls({ betId }: AdminControlsProps) {
       !editForm.description.trim() ||
       !editForm.amount
     ) {
-      alert("لطفا تمام فیلدها را پر کنید");
+      alert("Please fill all fields");
       return;
     }
 
@@ -89,14 +89,14 @@ export function AdminControls({ betId }: AdminControlsProps) {
       if (response.ok) {
         setEditDialogOpen(false);
         fetchBet(); // Refresh bet data
-        alert("بسته‌بندی با موفقیت ویرایش شد");
+        alert("Bet edited successfully");
       } else {
         const error = await response.json();
-        alert(error.error || "خطا در ویرایش بسته‌بندی");
+        alert(error.error || "Error editing bet");
       }
     } catch (error) {
       console.error("Error editing bet:", error);
-      alert("خطا در ویرایش بسته‌بندی");
+      alert("Error editing bet");
     } finally {
       setLoading(false);
     }
@@ -104,13 +104,13 @@ export function AdminControls({ betId }: AdminControlsProps) {
 
   const handleStatusChange = async () => {
     if (!newStatus) {
-      alert("لطفا وضعیت جدید را انتخاب کنید");
+      alert("Please select a new status");
       return;
     }
 
     // If resolving, winning option is required
     if (newStatus === "resolved" && !winningOption) {
-      alert("برای حل بسته‌بندی، گزینه برنده را انتخاب کنید");
+      alert("For resolving bet, select winning option");
       return;
     }
 
@@ -128,14 +128,14 @@ export function AdminControls({ betId }: AdminControlsProps) {
       if (response.ok) {
         setStatusDialogOpen(false);
         fetchBet(); // Refresh bet data
-        alert("وضعیت بسته‌بندی با موفقیت تغییر کرد");
+        alert("Bet status changed successfully");
       } else {
         const error = await response.json();
-        alert(error.error || "خطا در تغییر وضعیت");
+        alert(error.error || "Error changing status");
       }
     } catch (error) {
       console.error("Error changing status:", error);
-      alert("خطا در تغییر وضعیت");
+      alert("Error changing status");
     } finally {
       setLoading(false);
     }
@@ -144,7 +144,7 @@ export function AdminControls({ betId }: AdminControlsProps) {
   const handleDelete = async () => {
     if (
       !confirm(
-        "آیا مطمئن هستید که می‌خواهید این بسته‌بندی را حذف کنید؟ این عمل قابل بازگشت نیست."
+        "Are you sure you want to delete this bet? This action cannot be undone."
       )
     ) {
       return;
@@ -157,22 +157,22 @@ export function AdminControls({ betId }: AdminControlsProps) {
       });
 
       if (response.ok) {
-        alert("بسته‌بندی با موفقیت حذف شد");
+        alert("Bet deleted successfully");
         window.location.href = "/admin"; // Redirect to admin dashboard
       } else {
         const error = await response.json();
-        alert(error.error || "خطا در حذف بسته‌بندی");
+        alert(error.error || "Error deleting bet");
       }
     } catch (error) {
       console.error("Error deleting bet:", error);
-      alert("خطا در حذف بسته‌بندی");
+      alert("Error deleting bet");
     } finally {
       setLoading(false);
     }
   };
 
   const handleRemoveParticipant = async (participationId: number) => {
-    if (!confirm("آیا مطمئن هستید که می‌خواهید این شرکت‌کننده را حذف کنید؟")) {
+    if (!confirm("Are you sure you want to remove this participant?")) {
       return;
     }
 
@@ -186,14 +186,14 @@ export function AdminControls({ betId }: AdminControlsProps) {
 
       if (response.ok) {
         fetchBet(); // Refresh bet data
-        alert("شرکت‌کننده با موفقیت حذف شد");
+        alert("Participant removed successfully");
       } else {
         const error = await response.json();
-        alert(error.error || "خطا در حذف شرکت‌کننده");
+        alert(error.error || "Error removing participant");
       }
     } catch (error) {
       console.error("Error removing participant:", error);
-      alert("خطا در حذف شرکت‌کننده");
+      alert("Error removing participant");
     } finally {
       setLoading(false);
     }
@@ -205,55 +205,66 @@ export function AdminControls({ betId }: AdminControlsProps) {
   });
 
   if (!bet) {
-    return <div className="text-center py-4">در حال بارگذاری...</div>;
+    return <div className="text-center py-4 dark:text-white">Loading...</div>;
   }
 
   return (
-    <Card className="mt-6">
+    <Card className="mt-6 dark:bg-gray-800 dark:border-gray-700">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 dark:text-white">
           <CheckCircle className="h-5 w-5" />
-          کنترل‌های ادمین
+          Admin Controls
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Edit Bet */}
         <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
           <DialogTrigger asChild>
-            <Button variant="outline" className="w-full">
+            <Button
+              variant="outline"
+              className="w-full dark:border-gray-600 dark:text-white dark:hover:bg-gray-700"
+            >
               <Edit className="h-4 w-4 mr-2" />
-              ویرایش بسته‌بندی
+              Edit Bet
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="dark:bg-gray-800 dark:border-gray-700">
             <DialogHeader>
-              <DialogTitle>ویرایش بسته‌بندی</DialogTitle>
+              <DialogTitle className="dark:text-white">Edit Bet</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="title">عنوان</Label>
+                <Label htmlFor="title" className="dark:text-white">
+                  Title
+                </Label>
                 <Input
                   id="title"
                   value={editForm.title}
                   onChange={(e) =>
                     setEditForm({ ...editForm, title: e.target.value })
                   }
-                  placeholder="عنوان بسته‌بندی"
+                  placeholder="Bet title"
+                  className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
               </div>
               <div>
-                <Label htmlFor="description">توضیحات</Label>
+                <Label htmlFor="description" className="dark:text-white">
+                  Description
+                </Label>
                 <Textarea
                   id="description"
                   value={editForm.description}
                   onChange={(e) =>
                     setEditForm({ ...editForm, description: e.target.value })
                   }
-                  placeholder="توضیحات بسته‌بندی"
+                  placeholder="Bet description"
+                  className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
               </div>
               <div>
-                <Label htmlFor="amount">مبلغ (تومان)</Label>
+                <Label htmlFor="amount" className="dark:text-white">
+                  Amount (Toman)
+                </Label>
                 <Input
                   id="amount"
                   type="number"
@@ -261,18 +272,20 @@ export function AdminControls({ betId }: AdminControlsProps) {
                   onChange={(e) =>
                     setEditForm({ ...editForm, amount: e.target.value })
                   }
-                  placeholder="مبلغ بسته‌بندی"
+                  placeholder="Bet amount"
+                  className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
               </div>
               <div className="flex gap-2">
                 <Button onClick={handleEdit} disabled={loading}>
-                  {loading ? "در حال ذخیره..." : "ذخیره"}
+                  {loading ? "Saving..." : "Save"}
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => setEditDialogOpen(false)}
+                  className="dark:border-gray-600 dark:text-white dark:hover:bg-gray-700"
                 >
-                  لغو
+                  Cancel
                 </Button>
               </div>
             </div>
@@ -282,40 +295,47 @@ export function AdminControls({ betId }: AdminControlsProps) {
         {/* Change Status */}
         <Dialog open={statusDialogOpen} onOpenChange={setStatusDialogOpen}>
           <DialogTrigger asChild>
-            <Button variant="outline" className="w-full">
+            <Button
+              variant="outline"
+              className="w-full dark:border-gray-600 dark:text-white dark:hover:bg-gray-700"
+            >
               <Play className="h-4 w-4 mr-2" />
-              تغییر وضعیت
+              Change Status
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="dark:bg-gray-800 dark:border-gray-700">
             <DialogHeader>
-              <DialogTitle>تغییر وضعیت بسته‌بندی</DialogTitle>
+              <DialogTitle className="dark:text-white">
+                Change Bet Status
+              </DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label>وضعیت فعلی: {bet.status}</Label>
+                <Label className="dark:text-white">
+                  Current status: {bet.status}
+                </Label>
                 <Select value={newStatus} onValueChange={setNewStatus}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="انتخاب وضعیت جدید" />
+                  <SelectTrigger className="dark:bg-gray-700 dark:border-gray-600">
+                    <SelectValue placeholder="Select new status" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="active">فعال</SelectItem>
-                    <SelectItem value="in-progress">در حال انجام</SelectItem>
-                    <SelectItem value="resolved">حل شده</SelectItem>
+                  <SelectContent className="dark:bg-gray-700 dark:border-gray-600">
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="in-progress">In Progress</SelectItem>
+                    <SelectItem value="resolved">Resolved</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               {newStatus === "resolved" && (
                 <div>
-                  <Label>گزینه برنده</Label>
+                  <Label className="dark:text-white">Winning Option</Label>
                   <Select
                     value={winningOption}
                     onValueChange={setWinningOption}
                   >
-                    <SelectTrigger>
-                      <SelectValue placeholder="انتخاب گزینه برنده" />
+                    <SelectTrigger className="dark:bg-gray-700 dark:border-gray-600">
+                      <SelectValue placeholder="Select winning option" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="dark:bg-gray-700 dark:border-gray-600">
                       {bet.options?.map((option: any) => (
                         <SelectItem key={option.id} value={option.optionText}>
                           {option.optionText}
@@ -327,13 +347,14 @@ export function AdminControls({ betId }: AdminControlsProps) {
               )}
               <div className="flex gap-2">
                 <Button onClick={handleStatusChange} disabled={loading}>
-                  {loading ? "در حال تغییر..." : "تغییر وضعیت"}
+                  {loading ? "Changing..." : "Change Status"}
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => setStatusDialogOpen(false)}
+                  className="dark:border-gray-600 dark:text-white dark:hover:bg-gray-700"
                 >
-                  لغو
+                  Cancel
                 </Button>
               </div>
             </div>
@@ -345,16 +366,16 @@ export function AdminControls({ betId }: AdminControlsProps) {
           <DialogTrigger asChild>
             <Button variant="destructive" className="w-full">
               <Trash2 className="h-4 w-4 mr-2" />
-              حذف بسته‌بندی
+              Delete Bet
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="dark:bg-gray-800 dark:border-gray-700">
             <DialogHeader>
-              <DialogTitle>حذف بسته‌بندی</DialogTitle>
+              <DialogTitle className="dark:text-white">Delete Bet</DialogTitle>
             </DialogHeader>
-            <p className="text-muted-foreground">
-              آیا مطمئن هستید که می‌خواهید این بسته‌بندی را حذف کنید؟ این عمل
-              قابل بازگشت نیست.
+            <p className="text-muted-foreground dark:text-gray-300">
+              Are you sure you want to delete this bet? This action cannot be
+              undone.
             </p>
             <div className="flex gap-2">
               <Button
@@ -362,13 +383,14 @@ export function AdminControls({ betId }: AdminControlsProps) {
                 onClick={handleDelete}
                 disabled={loading}
               >
-                {loading ? "در حال حذف..." : "حذف"}
+                {loading ? "Deleting..." : "Delete"}
               </Button>
               <Button
                 variant="outline"
                 onClick={() => setDeleteDialogOpen(false)}
+                className="dark:border-gray-600 dark:text-white dark:hover:bg-gray-700"
               >
-                لغو
+                Cancel
               </Button>
             </div>
           </DialogContent>
@@ -377,20 +399,21 @@ export function AdminControls({ betId }: AdminControlsProps) {
         {/* Remove Participants */}
         {bet.participants?.length > 0 && (
           <div className="space-y-2">
-            <h4 className="font-medium">مدیریت شرکت‌کنندگان</h4>
+            <h4 className="font-medium dark:text-white">Manage Participants</h4>
             {bet.participants.map((participant: any) => (
               <div
                 key={participant.id}
-                className="flex items-center justify-between p-2 border rounded"
+                className="flex items-center justify-between p-2 border rounded dark:border-gray-600 dark:bg-gray-700"
               >
-                <span>
-                  کاربر {participant.userId} - {participant.selectedOptionText}
+                <span className="dark:text-white">
+                  User {participant.userId} - {participant.selectedOptionText}
                 </span>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => handleRemoveParticipant(participant.id)}
                   disabled={loading}
+                  className="dark:text-white dark:hover:bg-gray-600"
                 >
                   <X className="h-4 w-4" />
                 </Button>
