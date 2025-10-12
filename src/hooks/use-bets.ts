@@ -20,6 +20,7 @@ export const useBets = () => {
     setLoading,
     setError,
     clearAll,
+    getSingleBet,
   } = useBetsStore();
 
   return {
@@ -41,5 +42,6 @@ export const useBets = () => {
     setLoading,
     setError,
     clearAll,
+    getSingleBet,
   };
 };

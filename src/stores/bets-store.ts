@@ -29,6 +29,26 @@ export interface Bet {
   participations?: BetParticipation[];
 }
 
+export interface BetDetails {
+  id: number;
+  title: string;
+  description: string;
+  amount: number;
+  status: "active" | "in-progress" | "resolved";
+  winningOption: string | null;
+  options: BetOption[];
+  participants: {
+    id: number;
+    userId: number;
+    selectedOptionText: string | null;
+    isWinner: boolean | null;
+    participatedAt: string;
+  }[];
+  participationCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 interface BetsState {
   allBets: Bet[];
   activeBets: Bet[];
@@ -51,6 +71,7 @@ interface BetsActions {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   clearAll: () => void;
+  getSingleBet: (betId: number) => Promise<BetDetails>;
 }
 
 type BetsStore = BetsState & BetsActions;
@@ -145,4 +166,18 @@ export const useBetsStore = create<BetsStore>((set, get) => ({
       isLoading: false,
       error: null,
     }),
+
+  getSingleBet: async (betId: number): Promise<BetDetails> => {
+    try {
+      const response = await fetch(`/api/bets/${betId}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch bet details");
+      }
+      const data = await response.json();
+      return data.bet;
+    } catch (error) {
+      console.error("Error fetching single bet:", error);
+      throw error;
+    }
+  },
 }));

@@ -4,9 +4,9 @@
 
 **MD files to read before changes:** `agent/dashboards/bet-details-dashboard.md`, `agent/users-roles.md`
 
-- [ ] Create bet/[id] page component
-- [ ] Add bet info display (title, desc, amount, status)
-- [ ] Add participants list with their options
-- [ ] Add admin controls (edit, status change, delete)
-- [ ] Add winners display for resolved bets
-- [ ] Add participant removal for admins
+- [x] Create bet/[id] page component
+- [x] Add bet info display (title, desc, amount, status)
+- [x] Add participants list with their options
+- [x] Add admin controls (edit, status change, delete)
+- [x] Add winners display for resolved bets
+- [x] Add participant removal for admins
