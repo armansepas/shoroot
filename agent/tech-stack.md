@@ -7,3 +7,4 @@
 - typescript
 - lucid-react for icons
 - zustand
+- pnpm
