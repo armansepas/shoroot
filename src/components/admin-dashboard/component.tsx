@@ -1,10 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
 import {
   User,
@@ -15,12 +12,10 @@ import {
   UpdateBetData,
   AdminStats,
 } from "./types";
-import {
-  formatDate,
-  formatCurrency,
-  getStatusColor,
-  getRoleColor,
-} from "./utils";
+import { Header } from "./header";
+import { StatsCards } from "./stats-cards";
+import { UsersTable } from "./users-table";
+import { BetsTable } from "./bets-table";
 import { UserModal } from "./user-modal";
 import { BetModal } from "./bet-modal";
 import { StatusModal } from "./status-modal";
@@ -314,222 +309,38 @@ export function AdminDashboard() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Admin Dashboard
-        </h1>
-        <p className="text-gray-600">Manage users and bets</p>
-      </div>
+      <Header />
 
       {/* Admin Stats */}
-      {adminStats && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-          <Card>
-            <CardContent className="p-6 text-center">
-              <div className="text-2xl font-bold text-blue-600">
-                {adminStats.totalUsers}
-              </div>
-              <p className="text-gray-600 text-sm">Total Users</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6 text-center">
-              <div className="text-2xl font-bold text-green-600">
-                {adminStats.activeBets}
-              </div>
-              <p className="text-gray-600 text-sm">Active Bets</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6 text-center">
-              <div className="text-2xl font-bold text-yellow-600">
-                {adminStats.resolvedBets}
-              </div>
-              <p className="text-gray-600 text-sm">Resolved Bets</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6 text-center">
-              <div className="text-2xl font-bold text-red-600">
-                {adminStats.closedBets}
-              </div>
-              <p className="text-gray-600 text-sm">Closed Bets</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6 text-center">
-              <div className="text-2xl font-bold text-purple-600">
-                {formatCurrency(adminStats.totalMoneyRaised)}
-              </div>
-              <p className="text-gray-600 text-sm">Total Money Raised</p>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+      {adminStats && <StatsCards adminStats={adminStats} />}
 
       <Tabs defaultValue="bets" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="bets">Bets Management</TabsTrigger>
-          <TabsTrigger value="users">Users Management</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 dark:bg-gray-800">
+          <TabsTrigger value="bets" className="dark:text-white">
+            Bets Management
+          </TabsTrigger>
+          <TabsTrigger value="users" className="dark:text-white">
+            Users Management
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="users" className="mt-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">Users</h2>
-            <Button onClick={handleCreateUser}>Create User</Button>
-          </div>
-
-          <div className="bg-white rounded-lg border overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    ID
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Email
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Role
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Created At
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {users.map((user) => (
-                  <tr key={user.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {user.id}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {user.email}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <Badge className={getRoleColor(user.role)}>
-                        {user.role}
-                      </Badge>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {formatDate(user.createdAt)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEditUser(user)}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => handleDeleteUser(user.id)}
-                        >
-                          Delete
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {users.length === 0 && (
-            <div className="text-center py-8 text-gray-500">No users found</div>
-          )}
+          <UsersTable
+            users={users}
+            onCreateUser={handleCreateUser}
+            onEditUser={handleEditUser}
+            onDeleteUser={handleDeleteUser}
+          />
         </TabsContent>
 
         <TabsContent value="bets" className="mt-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">Bets</h2>
-            <Button onClick={handleCreateBet}>Create Bet</Button>
-          </div>
-
-          <div className="bg-white rounded-lg border overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    ID
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Title
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Amount
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Created At
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {bets.map((bet) => (
-                  <tr key={bet.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {bet.id}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {bet.title}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <Badge className={getStatusColor(bet.status)}>
-                        {bet.status.replace("-", " ")}
-                      </Badge>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {formatCurrency(bet.amount)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {formatDate(bet.createdAt)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEditBet(bet)}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleStatusChange(bet)}
-                        >
-                          Status
-                        </Button>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => handleDeleteBet(bet.id)}
-                        >
-                          Delete
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {bets.length === 0 && (
-            <div className="text-center py-8 text-gray-500">No bets found</div>
-          )}
+          <BetsTable
+            bets={bets}
+            onCreateBet={handleCreateBet}
+            onEditBet={handleEditBet}
+            onStatusChange={handleStatusChange}
+            onDeleteBet={handleDeleteBet}
+          />
         </TabsContent>
       </Tabs>
 
