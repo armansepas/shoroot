@@ -1,4 +1,4 @@
-# Betting App
+# ShorOOt
 
 A simple betting application where users can participate in bets and admins can manage them.
 

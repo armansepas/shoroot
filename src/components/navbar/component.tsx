@@ -29,7 +29,7 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Logo */}
         <Link href="/" className="text-xl font-bold text-gray-900">
-          Betting App
+          ShorOOt
         </Link>
 
         {/* Auth Section */}
