@@ -1,3 +1,4 @@
-- the bakcend routes should be nested folder for each type of routes.
-- each route handles one type of request and response .
-- each route has specific name of what it does . like placing a bet , getting bets , etc .
+- Backend routes are organized in nested folders under /api/.
+- Each route is in its own file (route.ts) and handles one specific API endpoint.
+- POST and GET routes are in separate folders/files.
+- Routes include authentication middleware to check user roles.
