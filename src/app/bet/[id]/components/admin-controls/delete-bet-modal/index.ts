@@ -1,0 +1,1 @@
+export { DeleteBetModal } from "./component";

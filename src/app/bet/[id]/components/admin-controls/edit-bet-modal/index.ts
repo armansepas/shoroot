@@ -1,0 +1,1 @@
+export { EditBetModal } from "./component";

@@ -1,0 +1,1 @@
+export { ManageParticipants } from "./component";
