@@ -9,3 +9,4 @@
 - when the user clicks on the participate button , it brings up a modal which shows the participate form . which are all the options which are buttons user can click one to select . then when user clicks on the submit button , it takes the user back to the bets dashboard .
 - cards with status of completed which are either expired or resolved by admin have gray background .
 - cards with status of active are which it is created by admin , it is not expired or resolved and users can participate in it . and has white background .with green status .
+- bet options are at least 2 options , admin can add as much as he wants . the first 2 options are shown in the bet card . the rest are shown in the participate form and the details page .

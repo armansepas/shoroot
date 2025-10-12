@@ -5,3 +5,4 @@
 - there is a navbar which has sign in and log in buttons by default but when a user is signed in , the navbar has a profile button with log out button .
 - there is a button which says participate which takes user to login page (if not loged in) or to user bets dashboard (if logged in) .
 - the winning option of a bet is shown when the bet is resolved .
+- bet options are at least 2 options , admin can add as much as he wants . the first 2 options are shown in the bet card . the rest are shown in the participate form and the details page .

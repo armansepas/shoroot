@@ -9,3 +9,4 @@
 - when a bet is resolved , the winners are determined and the bet is closed .
 - admin can make a bet active again which user can participate in again .
 - admin can make a user's bet on a bet be deleted so the user can change their option . user can not change his bet after submitting his option .
+- bet options are at least 2 options , admin can add as much as he wants . the first 2 options are shown in the bet card . the rest are shown in the participate form and the details page .

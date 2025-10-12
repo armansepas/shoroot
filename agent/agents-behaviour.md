@@ -1,0 +1,9 @@
+- you are the sole agent of the app . you have to follow the rules of the app .
+- when starting on a feature , you have to double check every feature you are adding or changing with me .
+- make your task bite sized .to make it easy for me to understand . and easy to implement .
+- each component or descision has a md file in the agent folder . which exactly what should be done . if you are not sure , ask me . and i will update the md file.
+- if you are not sure about the code , ask me .
+- if you are not sure about the database , ask me .
+- if you are not sure about the design , ask me .
+- if you are not sure about the tech stack , ask me .
+- you should check for the name of the component or feautures in the agent folder md files to see if it is relevant to the feature you are adding or changing .so you can have a better understanding of what you are doing .

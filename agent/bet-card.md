@@ -1,3 +1,4 @@
 - bet card consiste of a title , description , amount , status and all the options which are buttons .and logged in users can see in their dashboard .
 - when a user clicks on the participate button , it brings up a modal which shows the participate form with all the options .
 - there also is a details button which takes the user to the bet details page . which shows the title , description , amount , status and all the options . and all the participants with their options .
+- bet options are at least 2 options , admin can add as much as he wants . the first 2 options are shown in the bet card . the rest are shown in the participate form and the details page .

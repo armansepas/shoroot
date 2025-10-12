@@ -3,3 +3,4 @@
 - users can only have view access to this page .
 - admins can have edit access to this page . meaning they can change the description , amount , status and participants . they can delete a participant . make bet active or make it in-progress or resolved . or undo all .
 - when a bet is resolved , the winners are determined and the bet is closed . and the winners are shown in the details page .
+- bet options are at least 2 options , admin can add as much as he wants . the first 2 options are shown in the bet card . the rest are shown in the participate form and the details page .
