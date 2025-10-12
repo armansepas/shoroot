@@ -205,7 +205,7 @@ export function BetModal({
 
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="amount" className="text-right">
-              Amount ($)
+              Amount (Toman)
             </Label>
             <div className="col-span-3">
               <Input

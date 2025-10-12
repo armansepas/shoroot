@@ -66,7 +66,7 @@ export function ParticipateModal({
           <div className="mb-4">
             <h4 className="font-medium text-gray-900 mb-2">Bet Details:</h4>
             <p className="text-sm text-gray-600 mb-1">{bet.description}</p>
-            <p className="text-sm text-gray-600">Amount: ${bet.amount}</p>
+            <p className="text-sm text-gray-600">Amount: {bet.amount} Toman</p>
           </div>
 
           <div className="space-y-2">

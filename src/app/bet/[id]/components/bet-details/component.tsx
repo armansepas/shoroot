@@ -69,7 +69,7 @@ export function BetDetails({ betId }: BetDetailsProps) {
           <p className="text-muted-foreground">{bet.description}</p>
           <div className="flex gap-4 text-sm">
             <span>
-              <strong>Amount:</strong> {bet.amount} تومان
+              <strong>Amount:</strong> {bet.amount}
             </span>
             <span>
               <strong>Participants:</strong> {bet.participationCount}
@@ -184,7 +184,7 @@ export function BetDetails({ betId }: BetDetailsProps) {
                     </p>
                   </div>
                   <Badge className="bg-green-500 ml-auto">
-                    Winner - {bet.amount} تومان
+                    Winner - {bet.amount}
                   </Badge>
                 </div>
               ))}
