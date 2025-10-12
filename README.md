@@ -31,7 +31,7 @@ A simple betting application where users can participate in bets and admins can 
 - Next.js 15, React 19, TypeScript
 - Tailwind CSS for styling
 - Shadcn/ui components
-- Drizzle ORM with SQLite (Turso)
+- Drizzle ORM with PostgreSQL (Neon)
 - Zustand for state management
 - JWT for authentication
 

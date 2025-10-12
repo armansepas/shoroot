@@ -10,7 +10,7 @@
 - the index is where the components are used
 - the app uses next 15 , react 19 and tailwindcss as its core .
 - the app is a standalone app , so we need to make a server and a client . using next js for the server and react for the client .
-- we should use drizzle to connect to the sqlite turso database .
+- we should use drizzle to connect to the neon postgresql database .
 - since we are building code first database , we need to make a migration file for each change in the database .
 - have a migration generator and migration push script .
   -always use tailwindcss no matter what .

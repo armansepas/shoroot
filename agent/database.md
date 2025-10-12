@@ -1,6 +1,6 @@
 - the database is a code first database .
 - the database is created using drizzle-kit .
-- database is a turso database . based on sqlite .
+- database is a neon postgresql database .
 - database connection string is stored in the .env file .
 - each change in the database is a migration file .
 - after each migration file is pushed to the database , the migration script is run to update the database .

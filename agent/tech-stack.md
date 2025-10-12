@@ -3,7 +3,7 @@
 - nextjs
 - react
 - drizzle
-- sqlite
+- postgresql (neon)
 - typescript
 - lucid-react for icons
 - zustand
