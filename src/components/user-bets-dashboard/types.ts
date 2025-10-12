@@ -17,6 +17,14 @@ export interface Bet {
   createdAt: string;
 }
 
+export interface UserStats {
+  participated: number;
+  won: number;
+  lost: number;
+  totalMoneyWon: number;
+  totalMoneyLost: number;
+}
+
 export interface UserBetsDashboardProps {
   // Add any props if needed
 }

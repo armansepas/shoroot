@@ -16,6 +16,33 @@ export interface Bet {
   createdAt: string;
 }
 
+export interface LeaderboardEntry {
+  userId: number;
+  email: string;
+  totalWon: number;
+  winCount: number;
+}
+
+export interface Stats {
+  totalBets: number;
+  activeBets: number;
+  inProgressBets: number;
+  closedBets: number;
+  totalMoneyRaised: number;
+  totalUsers: number;
+  topWinnerByCount: {
+    userId: number;
+    email: string;
+    winCount: number;
+  } | null;
+  topWinnerByAmount: {
+    userId: number;
+    email: string;
+    totalWon: number;
+  } | null;
+  leaderboard: LeaderboardEntry[];
+}
+
 export interface PublicDashboardProps {
   // Add any props if needed
 }

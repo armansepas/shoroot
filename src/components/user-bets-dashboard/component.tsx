@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/use-auth";
 import { ParticipateModal } from "./participate-modal";
-import { Bet, TabType } from "./types";
+import { Bet, TabType, UserStats } from "./types";
 import {
   getStatusColor,
   getCardBackgroundColor,
@@ -30,6 +30,7 @@ export function UserBetsDashboard() {
     "in-progress": [],
     resolved: [],
   });
+  const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>("all");
@@ -38,7 +39,7 @@ export function UserBetsDashboard() {
   const { user } = useAuth();
 
   useEffect(() => {
-    const fetchBets = async () => {
+    const fetchData = async () => {
       if (!user) return;
 
       try {
@@ -48,18 +49,31 @@ export function UserBetsDashboard() {
           return;
         }
 
-        const response = await fetch(`/api/bets/user?tab=${activeTab}`, {
+        // Fetch bets
+        const betsResponse = await fetch(`/api/bets/user?tab=${activeTab}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        if (!response.ok) {
+        if (!betsResponse.ok) {
           throw new Error("Failed to fetch bets");
         }
 
-        const data = await response.json();
-        setBets((prev) => ({ ...prev, [activeTab]: data.bets }));
+        const betsData = await betsResponse.json();
+        setBets((prev) => ({ ...prev, [activeTab]: betsData.bets }));
+
+        // Fetch user stats
+        const statsResponse = await fetch("/api/stats", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (statsResponse.ok) {
+          const statsData = await statsResponse.json();
+          setUserStats(statsData.userStats);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
@@ -68,7 +82,7 @@ export function UserBetsDashboard() {
     };
 
     if (user) {
-      fetchBets();
+      fetchData();
     }
   }, [user, activeTab]);
 
@@ -143,6 +157,52 @@ export function UserBetsDashboard() {
           Browse and participate in available bets
         </p>
       </div>
+
+      {/* User Stats */}
+      {userStats && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+          <Card>
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-blue-600">
+                {userStats.participated}
+              </div>
+              <p className="text-xs text-gray-600">Participated</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-green-600">
+                {userStats.won}
+              </div>
+              <p className="text-xs text-gray-600">Won</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-red-600">
+                {userStats.lost}
+              </div>
+              <p className="text-xs text-gray-600">Lost</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-green-600">
+                {formatCurrency(userStats.totalMoneyWon)}
+              </div>
+              <p className="text-xs text-gray-600">Money Won</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-red-600">
+                {formatCurrency(userStats.totalMoneyLost)}
+              </div>
+              <p className="text-xs text-gray-600">Money Lost</p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       <Tabs
         value={activeTab}

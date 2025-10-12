@@ -48,6 +48,14 @@ export interface UpdateBetData {
   options?: string[];
 }
 
+export interface AdminStats {
+  totalUsers: number;
+  activeBets: number;
+  resolvedBets: number;
+  closedBets: number;
+  totalMoneyRaised: number;
+}
+
 export interface AdminDashboardProps {
   // Add any props if needed
 }

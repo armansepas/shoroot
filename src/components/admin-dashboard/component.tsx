@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
 import {
   User,
@@ -12,6 +13,7 @@ import {
   UpdateUserData,
   CreateBetData,
   UpdateBetData,
+  AdminStats,
 } from "./types";
 import {
   formatDate,
@@ -26,6 +28,7 @@ import { StatusModal } from "./status-modal";
 export function AdminDashboard() {
   const [users, setUsers] = useState<User[]>([]);
   const [bets, setBets] = useState<Bet[]>([]);
+  const [adminStats, setAdminStats] = useState<AdminStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -252,11 +255,14 @@ export function AdminDashboard() {
           return;
         }
 
-        const [usersResponse, betsResponse] = await Promise.all([
+        const [usersResponse, betsResponse, statsResponse] = await Promise.all([
           fetch("/api/users/all", {
             headers: { Authorization: `Bearer ${token}` },
           }),
           fetch("/api/bets/all", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("/api/stats", {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -272,6 +278,11 @@ export function AdminDashboard() {
 
         setUsers(usersData.users);
         setBets(betsData.bets);
+
+        if (statsResponse.ok) {
+          const statsData = await statsResponse.json();
+          setAdminStats(statsData.adminStats);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
@@ -306,6 +317,62 @@ export function AdminDashboard() {
         </h1>
         <p className="text-gray-600">Manage users and bets</p>
       </div>
+
+      {/* Admin Stats */}
+      {adminStats && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Total Users</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-blue-600">
+                {adminStats.totalUsers}
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Active Bets</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-green-600">
+                {adminStats.activeBets}
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Resolved Bets</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-yellow-600">
+                {adminStats.resolvedBets}
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Closed Bets</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-red-600">
+                {adminStats.closedBets}
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Total Money Raised</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-purple-600">
+                {formatCurrency(adminStats.totalMoneyRaised)}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       <Tabs defaultValue="bets" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
