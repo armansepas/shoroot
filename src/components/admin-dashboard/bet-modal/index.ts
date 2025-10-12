@@ -1,0 +1,1 @@
+export { BetModal } from "./component";
