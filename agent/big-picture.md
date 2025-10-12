@@ -1,4 +1,4 @@
-- we are building a very simple betting application .
+- we are building a very simple betting application . the name of the app is shoroot .
 - the app should be scalable and readable so for each component we make a new file and put it in the right folder .
 - the structures are
   - component (folder)

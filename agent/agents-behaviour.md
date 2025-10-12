@@ -8,3 +8,4 @@
 - if you are not sure about the tech stack , ask me .
 - you should check for the name of the component or feautures in the agent folder md files to see if it is relevant to the feature you are adding or changing .so you can have a better understanding of what you are doing .
 - you have access to context7 mcp which is a tool to retrieve information from the internet .about the documents of certain libraries , you can use context7 to get the information you need .if you are not sure about the information , or the errors you get .
+- you have access to neon postgresql MCP which is the tool to connect to the database for any double checks or queries .if you are not sure about the information , or the errors you get .

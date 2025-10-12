@@ -4,3 +4,4 @@
 - database connection string is stored in the .env file .
 - each change in the database is a migration file .
 - after each migration file is pushed to the database , the migration script is run to update the database .
+- default admin user is admin@shoroot.com / admin123 .

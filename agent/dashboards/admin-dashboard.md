@@ -12,3 +12,4 @@
 - all actions require confirmation modals before executing .
 - the navbar shows admin dashboard link only for admin users .
 - admin users can not participate in bets . they can only see and manage them .
+- default admin user is admin@shoroot.com / admin123 .
