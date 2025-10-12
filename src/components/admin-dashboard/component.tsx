@@ -307,10 +307,10 @@ export function AdminDashboard() {
         <p className="text-gray-600">Manage users and bets</p>
       </div>
 
-      <Tabs defaultValue="users" className="w-full">
+      <Tabs defaultValue="bets" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="users">Users Management</TabsTrigger>
           <TabsTrigger value="bets">Bets Management</TabsTrigger>
+          <TabsTrigger value="users">Users Management</TabsTrigger>
         </TabsList>
 
         <TabsContent value="users" className="mt-6">
