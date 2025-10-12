@@ -4,9 +4,9 @@
 
 **MD files to read before changes:** `agent/backend-routes/admin-bet-create.md`, `agent/betting-rules.md`
 
-- [ ] Create /api/bets/create/route.ts file
-- [ ] Add admin-only auth check
-- [ ] Add validation for title, description, amount, options (min 2)
-- [ ] Add bet creation transaction with options
-- [ ] Add active status default
-- [ ] Add response with created bet
+- [x] Create /api/bets/create/route.ts file
+- [x] Add admin-only auth check
+- [x] Add validation for title, description, amount, options (min 2)
+- [x] Add bet creation transaction with options
+- [x] Add active status default
+- [x] Add response with created bet

@@ -4,8 +4,8 @@
 
 **MD files to read before changes:** `agent/backend-routes/bets-all.md`, `agent/backend-sctructure.md`
 
-- [ ] Create /api/bets/all/route.ts file
-- [ ] Add admin role check middleware
-- [ ] Add query to get all bets with relations
-- [ ] Add response formatting
-- [ ] Add error handling
+- [x] Create /api/bets/all/route.ts file
+- [x] Add admin role check middleware
+- [x] Add query to get all bets with relations
+- [x] Add response formatting
+- [x] Add error handling

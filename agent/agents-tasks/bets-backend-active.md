@@ -4,8 +4,8 @@
 
 **MD files to read before changes:** `agent/backend-routes/bets-active.md`, `agent/backend-sctructure.md`
 
-- [ ] Create /api/bets/active/route.ts file
-- [ ] Add pagination parameters (page, limit)
-- [ ] Add query for active bets only
-- [ ] Add first 2 options inclusion
-- [ ] Add total_pages calculation
+- [x] Create /api/bets/active/route.ts file
+- [x] Add pagination parameters (page, limit)
+- [x] Add query for active bets only
+- [x] Add first 2 options inclusion
+- [x] Add total_pages calculation
