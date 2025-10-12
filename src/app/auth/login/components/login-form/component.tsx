@@ -61,6 +61,7 @@ export function LoginForm({ onToggleToSignup }: LoginFormProps) {
       const data = await response.json();
 
       if (response.ok) {
+        localStorage.setItem("token", data.token);
         login(data.user);
         router.push("/");
       } else {
