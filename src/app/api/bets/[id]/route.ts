@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { bets, betOptions, betParticipations } from "@/lib/db/schema";
+import { bets, betOptions, betParticipations, users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 
 export async function GET(
@@ -45,23 +45,26 @@ export async function GET(
       .where(eq(betOptions.betId, betId))
       .orderBy(betOptions.id);
 
-    // Get participants for this bet
+    // Get participants for this bet with user details
     const participants = await db
       .select({
         id: betParticipations.id,
         userId: betParticipations.userId,
+        userEmail: users.email,
         selectedOptionId: betParticipations.selectedOptionId,
         isWinner: betParticipations.isWinner,
         participatedAt: betParticipations.participatedAt,
       })
       .from(betParticipations)
+      .innerJoin(users, eq(betParticipations.userId, users.id))
       .where(eq(betParticipations.betId, betId))
       .orderBy(betParticipations.participatedAt);
 
-    // Format participants with option details
+    // Format participants with option details and user email
     const formattedParticipants = participants.map((participant) => ({
       id: participant.id,
       userId: participant.userId,
+      userEmail: participant.userEmail,
       selectedOptionText: participant.selectedOptionId
         ? options.find((opt) => opt.id === participant.selectedOptionId)
             ?.optionText

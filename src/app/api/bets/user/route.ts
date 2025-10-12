@@ -128,7 +128,7 @@ export async function GET(request: NextRequest) {
         .where(
           and(
             eq(betParticipations.betId, bet.id),
-            eq(betParticipations.userId, decoded.id)
+            eq(betParticipations.userId, decoded.userId)
           )
         );
       return result.length > 0 && result[0].count > 0;
