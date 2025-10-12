@@ -27,7 +27,7 @@ interface StatusModalProps {
   onSubmit: (
     betId: number,
     status: string,
-    winningOptionId?: number
+    winningOption?: string
   ) => Promise<void>;
 }
 
@@ -40,13 +40,13 @@ export function StatusModal({
   const [status, setStatus] = useState<"active" | "in-progress" | "resolved">(
     "active"
   );
-  const [winningOptionId, setWinningOptionId] = useState<string>("");
+  const [winningOption, setWinningOption] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (bet) {
       setStatus(bet.status);
-      setWinningOptionId(bet.winningOption || "");
+      setWinningOption(bet.winningOption || "");
     }
   }, [bet, isOpen]);
 
@@ -55,12 +55,13 @@ export function StatusModal({
 
     setIsSubmitting(true);
     try {
-      const winningOption =
-        status === "resolved" && winningOptionId
-          ? parseInt(winningOptionId)
+      const winningOptionText =
+        status === "resolved" && winningOption
+          ? bet.options.find((opt) => opt.id.toString() === winningOption)
+              ?.optionText
           : undefined;
 
-      await onSubmit(bet.id, status, winningOption);
+      await onSubmit(bet.id, status, winningOptionText);
       onClose();
     } catch (error) {
       console.error("Status change error:", error);
@@ -72,7 +73,7 @@ export function StatusModal({
   const handleClose = () => {
     onClose();
     setStatus("active");
-    setWinningOptionId("");
+    setWinningOption("");
   };
 
   if (!bet) return null;
@@ -116,10 +117,7 @@ export function StatusModal({
                 Winning Option
               </Label>
               <div className="col-span-3">
-                <Select
-                  value={winningOptionId}
-                  onValueChange={setWinningOptionId}
-                >
+                <Select value={winningOption} onValueChange={setWinningOption}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select winning option" />
                   </SelectTrigger>
@@ -161,9 +159,7 @@ export function StatusModal({
           </Button>
           <Button
             onClick={handleSubmit}
-            disabled={
-              isSubmitting || (status === "resolved" && !winningOptionId)
-            }
+            disabled={isSubmitting || (status === "resolved" && !winningOption)}
           >
             {isSubmitting ? "Updating..." : "Update Status"}
           </Button>

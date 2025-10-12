@@ -213,7 +213,7 @@ export function AdminDashboard() {
   const handleStatusSubmit = async (
     betId: number,
     status: string,
-    winningOptionId?: number
+    winningOption?: string
   ) => {
     try {
       const token = localStorage.getItem("token");
@@ -225,7 +225,7 @@ export function AdminDashboard() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ status, winningOptionId }),
+        body: JSON.stringify({ status, winningOption }),
       });
 
       if (!response.ok) {
