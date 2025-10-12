@@ -4,9 +4,9 @@
 
 **MD files to read before changes:** `agent/file-structures.md`, `agent/big-picture.md`
 
-- [ ] Check if zustand is installed
-- [ ] Create auth store (user, login, logout)
-- [ ] Create bets store (all bets, active bets, etc.)
-- [ ] Create users store (current user, all users)
-- [ ] Create UI store (modals, loading states)
-- [ ] Create store hooks in hooks directory
+- [x] Check if zustand is installed
+- [x] Create auth store (user, login, logout)
+- [x] Create bets store (all bets, active bets, etc.)
+- [x] Create users store (current user, all users)
+- [x] Create UI store (modals, loading states)
+- [x] Create store hooks in hooks directory
