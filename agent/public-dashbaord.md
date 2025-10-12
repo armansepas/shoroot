@@ -1,0 +1,7 @@
+- decription: this is the public dashboard as the entry page in the home page .
+- the dashboard shows all the active | in-progress | resolved as cards to everyone .
+- in this dashboard there is no button for participation and it is view only .
+- there are information about the app like what it is etc .
+- there is a navbar which has sign in and log in buttons by default but when a user is signed in , the navbar has a profile button with log out button .
+- there is a button which says participate which takes user to login page (if not loged in) or to user bets dashboard (if logged in) .
+- the winning option of a bet is shown when the bet is resolved .

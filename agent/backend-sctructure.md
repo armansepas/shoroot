@@ -1,0 +1,3 @@
+- the bakcend routes should be nested folder for each type of routes.
+- each route handles one type of request and response .
+- each route has specific name of what it does . like placing a bet , getting bets , etc .

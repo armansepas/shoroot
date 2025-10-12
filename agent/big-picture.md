@@ -1,0 +1,18 @@
+- we are building a very simple betting application .
+- the app should be scalable and readable so for each component we make a new file and put it in the right folder .
+- the structures are
+  - component (folder)
+    - name of the component (folder )
+      - component1.tsx
+      - component2.tsx
+      - utils.ts
+      - index.ts
+- the index is where the components are used
+- the app uses next 15 , react 19 and tailwindcss as its core .
+- the app is a standalone app , so we need to make a server and a client . using next js for the server and react for the client .
+- we should use drizzle to connect to the sqlite turso database .
+- since we are building code first database , we need to make a migration file for each change in the database .
+- have a migration generator and migration push script .
+  -always use tailwindcss no matter what .
+- there is an md file for each component . in agent folder .
+- there is a .env file for the env variables .

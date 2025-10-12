@@ -1,0 +1,11 @@
+- decription: this is the user's dashboard where they can see or participate in bets .
+- this dashboard has 5 different tabs which are all | active(new bets) | in-progress | completed bets .
+- all tab is default and shows all bets .
+- active tab shows all active bets (new bets all active by default).
+- in-progress tab shows all in-progress bets .
+- completed bets tab shows all completed bets .
+- each tab has an inifite scroll which shows all bet cards in that category .
+- each bet card show the title , the description , the amount , the date and the status . it has a button to participate in the bet .
+- when the user clicks on the participate button , it brings up a modal which shows the participate form . which are all the options which are buttons user can click one to select . then when user clicks on the submit button , it takes the user back to the bets dashboard .
+- cards with status of completed which are either expired or resolved by admin have gray background .
+- cards with status of active are which it is created by admin , it is not expired or resolved and users can participate in it . and has white background .with green status .

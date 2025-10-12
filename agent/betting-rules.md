@@ -1,0 +1,11 @@
+- only admin can create bets with a title , description , amount . the amount is in toman .
+- only admin can edit bets .
+- when a bet is created , it is set to active by default .
+- users can only participate in bets which are active .
+- admin can make a bet in-progress .
+- admin can resolve a bet or unresolve a bet .
+- admin can delete a bet .
+- when a bet is in-progress , users can not participate in it . but the winners have not yet been determined .
+- when a bet is resolved , the winners are determined and the bet is closed .
+- admin can make a bet active again which user can participate in again .
+- admin can make a user's bet on a bet be deleted so the user can change their option . user can not change his bet after submitting his option .

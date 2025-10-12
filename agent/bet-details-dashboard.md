@@ -1,0 +1,5 @@
+- decription: this is the bet details page which shows the details of a bet .
+- the details are the title , description , amount , status . the participants are also shown with their submited options .
+- users can only have view access to this page .
+- admins can have edit access to this page . meaning they can change the description , amount , status and participants . they can delete a participant . make bet active or make it in-progress or resolved . or undo all .
+- when a bet is resolved , the winners are determined and the bet is closed . and the winners are shown in the details page .

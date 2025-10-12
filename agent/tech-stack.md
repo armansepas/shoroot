@@ -1,0 +1,8 @@
+- shadcn with default components no changed made .
+- tailwindcss
+- nextjs
+- react
+- drizzle
+- sqlite
+- typescript
+- lucid-react for icons

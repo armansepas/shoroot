@@ -1,0 +1,4 @@
+- there are 3 roles in the app , admin , user .
+- admin can create bets , edit bets (change descriotions , make them active , make them in progress , resolve them or undo all ), delete bets , see users, create users , edit users password , delete users .
+- users can see all the bets , participate in bets whenbet is active , see their history of win and loses per bet and overall . can change their password .
+- admins can not participate in bets , they can only see bets and their history and can edit bets .
