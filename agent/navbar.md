@@ -1,0 +1,3 @@
+- decription: this is the navbar which is shown on all pages .
+- navbar has a logo , sign in and sign out buttons if not logged in . if logged in , it has a profile button and a log out button .
+- a dashboard dropdown menu is shown when the user is logged in . it has a link to the user bets dashboard , a link to the public dashboard and a link to the admin dashboard (only admins can see this link) .

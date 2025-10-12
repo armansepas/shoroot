@@ -1,0 +1,4 @@
+- decription: this is the auth page which is used to login and signup .
+- the login form is shown as default . which takes an email and password . validates and redirects to the public dashboard if successful .
+- the signup form is shown when the user clicks on the signup button .
+- the signup form takes an email , password and confirm password . validates and redirects to the public dashboard if successful .
