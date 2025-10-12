@@ -123,6 +123,77 @@ export function PublicDashboard() {
         </TabsList>
 
         <TabsContent value="bets" className="mt-6">
+          {/* Bets Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {bets.map((bet) => (
+              <Card key={bet.id} className="hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg line-clamp-2">
+                      {bet.title}
+                    </CardTitle>
+                    <Badge className={getStatusColor(bet.status)}>
+                      {bet.status.replace("-", " ")}
+                    </Badge>
+                  </div>
+                  <CardDescription className="line-clamp-3">
+                    {bet.description}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {/* Amount and Participants */}
+                    <div className="flex justify-between text-sm text-gray-600">
+                      <span>Bet Amount: {formatCurrency(bet.amount)}</span>
+                      <span>{bet.participationCount} participants</span>
+                    </div>
+
+                    {/* Options */}
+                    <div className="space-y-1">
+                      {bet.options.map((option, index) => (
+                        <div
+                          key={option.id}
+                          className={`p-2 rounded text-sm border ${
+                            bet.status === "resolved" &&
+                            bet.winningOptionText === option.optionText
+                              ? "bg-green-50 border-green-200 text-green-800"
+                              : "bg-gray-50 border-gray-200"
+                          }`}
+                        >
+                          <span className="font-medium">
+                            Option {index + 1}:
+                          </span>{" "}
+                          {option.optionText}
+                          {bet.status === "resolved" &&
+                            bet.winningOptionText === option.optionText && (
+                              <span className="ml-2 text-green-600 font-bold">
+                                ✓ Winner
+                              </span>
+                            )}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* View Details Button */}
+                    <Link href={`/bet/${bet.id}`}>
+                      <Button variant="outline" className="w-full">
+                        View Details
+                      </Button>
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {bets.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-500">No bets available at the moment.</p>
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="leaderboard" className="mt-6">
           {/* Stats */}
           {stats && (
             <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
@@ -219,77 +290,6 @@ export function PublicDashboard() {
             </div>
           )}
 
-          {/* Bets Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {bets.map((bet) => (
-              <Card key={bet.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <CardTitle className="text-lg line-clamp-2">
-                      {bet.title}
-                    </CardTitle>
-                    <Badge className={getStatusColor(bet.status)}>
-                      {bet.status.replace("-", " ")}
-                    </Badge>
-                  </div>
-                  <CardDescription className="line-clamp-3">
-                    {bet.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {/* Amount and Participants */}
-                    <div className="flex justify-between text-sm text-gray-600">
-                      <span>Bet Amount: {formatCurrency(bet.amount)}</span>
-                      <span>{bet.participationCount} participants</span>
-                    </div>
-
-                    {/* Options */}
-                    <div className="space-y-1">
-                      {bet.options.map((option, index) => (
-                        <div
-                          key={option.id}
-                          className={`p-2 rounded text-sm border ${
-                            bet.status === "resolved" &&
-                            bet.winningOptionText === option.optionText
-                              ? "bg-green-50 border-green-200 text-green-800"
-                              : "bg-gray-50 border-gray-200"
-                          }`}
-                        >
-                          <span className="font-medium">
-                            Option {index + 1}:
-                          </span>{" "}
-                          {option.optionText}
-                          {bet.status === "resolved" &&
-                            bet.winningOptionText === option.optionText && (
-                              <span className="ml-2 text-green-600 font-bold">
-                                ✓ Winner
-                              </span>
-                            )}
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* View Details Button */}
-                    <Link href={`/bet/${bet.id}`}>
-                      <Button variant="outline" className="w-full">
-                        View Details
-                      </Button>
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {bets.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-500">No bets available at the moment.</p>
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="leaderboard" className="mt-6">
           <Card>
             <CardHeader>
               <CardTitle>🏆 Leaderboard - Top Winners</CardTitle>
