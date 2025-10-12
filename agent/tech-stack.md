@@ -6,3 +6,4 @@
 - sqlite
 - typescript
 - lucid-react for icons
+- zustand

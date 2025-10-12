@@ -16,3 +16,4 @@
   -always use tailwindcss no matter what .
 - there is an md file for each component . in agent folder .
 - there is a .env file for the env variables .
+- state management are all done using zustand . all stated are global states by default unless specified . and all actions are global actions by default unless specified .

@@ -1,0 +1,14 @@
+- description: this is the admin dashboard which is accessible only to admin users . it shows all the users and all the bets . and allows the admin to manage them .
+- the dashboard has 2 main tabs which are users and bets .
+- users tab shows all the users in a table format with columns id , email , role , created_at . and has actions column with edit and delete buttons .
+- bets tab shows all the bets in a table format with columns id , title , status , amount , created_at . and has actions column with edit , delete , change status buttons .
+- there is a create user button in the users tab . which opens a modal with a form to create a new user with email , password and role .
+- there is a create bet button in the bets tab . which opens a modal with a form to create a new bet with title , description , amount and options (at least 2 options) .
+- edit user modal is opened when edit button is clicked . it has email , password and role fields . all optional . password is hashed .
+- edit bet modal is opened when edit button is clicked . it has title , description , amount and options fields . all optional .
+- change status modal is opened when change status button is clicked . it has a dropdown with active , in-progress , resolved options . if resolved is selected , it shows a winning option dropdown with all the bet options .
+- delete user button deletes the user and all their participations .
+- delete bet button deletes the bet and all its options and participations .
+- all actions require confirmation modals before executing .
+- the navbar shows admin dashboard link only for admin users .
+- admin users can not participate in bets . they can only see and manage them .
