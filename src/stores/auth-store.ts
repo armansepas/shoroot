@@ -39,13 +39,16 @@ export const useAuthStore = create<AuthStore>((set) => ({
       error: null,
     }),
 
-  logout: () =>
+  logout: () => {
     set({
       user: null,
       isAuthenticated: false,
       isLoading: false,
       error: null,
-    }),
+    });
+    // Clear token from localStorage on logout
+    localStorage.removeItem("token");
+  },
 
   setLoading: (loading: boolean) => set({ isLoading: loading }),
 
