@@ -40,8 +40,7 @@ export function Navbar() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="flex items-center gap-2">
-                    <User className="h-4 w-4" />
-                    Dashboard
+                    <span className="text-sm">{user.email}</span>
                     <ChevronDown className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
