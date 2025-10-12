@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { db } from "@/lib/db";
 import { bets, betOptions, betParticipations } from "@/lib/db/schema";
-import { eq, count, desc, or } from "drizzle-orm";
+import { eq, count, desc, or, and } from "drizzle-orm";
 
 export async function GET(request: NextRequest) {
   try {
@@ -125,10 +125,13 @@ export async function GET(request: NextRequest) {
       const result = await db
         .select({ count: count() })
         .from(betParticipations)
-        .where(eq(betParticipations.betId, bet.id))
-        .where(eq(betParticipations.userId, decoded.id));
-
-      return result[0].count > 0;
+        .where(
+          and(
+            eq(betParticipations.betId, bet.id),
+            eq(betParticipations.userId, decoded.id)
+          )
+        );
+      return result.length > 0 && result[0].count > 0;
     });
 
     const userParticipations = await Promise.all(userParticipationPromises);

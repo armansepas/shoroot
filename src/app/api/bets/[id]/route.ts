@@ -5,10 +5,11 @@ import { eq } from "drizzle-orm";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const betId = parseInt(params.id);
+    const { id } = await params;
+    const betId = parseInt(id);
 
     if (isNaN(betId)) {
       return NextResponse.json({ error: "Invalid bet ID" }, { status: 400 });
