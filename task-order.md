@@ -13,3 +13,4 @@ public-dashboard.md - Entry point dashboard showing bets
 user-bets-dashboard.md - User-specific dashboard with tabs
 bet-details-page.md - Detailed view of individual bets
 admin-dashboard.md - Complete admin management interface
+profile-page.md - User profile page

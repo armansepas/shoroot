@@ -1,0 +1,8 @@
+- description: this is the user profile dashboard which shows the current user's profile information and allows password changes.
+- the details are the user's email, role, and registration date.
+- users can view their profile information and change their password.
+- admins can view their profile information and change their password.
+- admin can view all users and all their informations in a table format. can change password with no confirmation neede and chnage role with no confirmation needed.
+- password change requires current password verification and confirmation of new password.
+- all changes are validated on the backend with appropriate error messages.
+- the page should be responsive and accessible to both mobile and desktop users.
