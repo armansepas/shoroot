@@ -19,7 +19,11 @@ export function Navbar() {
         {/* Right Section */}
         <div className="flex items-center gap-4">
           <DarkModeToggle />
-          {isAuthenticated && user && <NotificationBell />}
+          {isAuthenticated && user && (
+            <div className="hidden sm:block">
+              <NotificationBell />
+            </div>
+          )}
           {isAuthenticated && user ? (
             <UserMenu user={user} isAdmin={isAdmin} logout={logout} />
           ) : (

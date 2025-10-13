@@ -130,7 +130,7 @@ export function LoginForm({ onToggleToSignup }: LoginFormProps) {
       <div className="text-center">
         <button
           type="button"
-          onClick={onToggleToSignup}
+          onClick={() => router.push("/auth/signup")}
           className="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300"
         >
           Don't have an account? Sign up

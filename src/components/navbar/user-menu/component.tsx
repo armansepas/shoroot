@@ -1,5 +1,11 @@
 import { useRouter } from "next/navigation";
-import { LogOut, User, ChevronDown, Bell } from "lucide-react";
+import {
+  LogOut,
+  User,
+  ChevronDown,
+  Bell,
+  LayoutDashboardIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,7 +40,8 @@ export function UserMenu({ user, isAdmin, logout }: UserMenuProps) {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="flex items-center gap-2">
-            <span className="text-sm">Dashboards</span>
+            <span className="text-sm hidden sm:inline">Dashboards</span>
+            <LayoutDashboardIcon className="h-4 w-4 " />
             <ChevronDown className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
