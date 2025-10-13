@@ -23,6 +23,7 @@ export function ProfileForm() {
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
+    fullName: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -33,6 +34,15 @@ export function ProfileForm() {
   useEffect(() => {
     fetchProfile();
   }, []);
+
+  useEffect(() => {
+    if (profileData?.fullName) {
+      setFormData((prev) => ({
+        ...prev,
+        fullName: profileData.fullName || "",
+      }));
+    }
+  }, [profileData]);
 
   const fetchProfile = async () => {
     if (!user) return;
@@ -71,9 +81,9 @@ export function ProfileForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const validation = validatePasswordChange(formData);
-    if (!validation.success) {
-      setError(validation.error.errors[0].message);
+    // Validate fullName length
+    if (formData.fullName.trim().length < 3) {
+      setError("Full name must be at least 3 characters long");
       return;
     }
 
@@ -82,34 +92,29 @@ export function ProfileForm() {
     setSuccess(null);
 
     try {
-      const response = await fetch("/api/users/change-password", {
-        method: "POST",
+      const response = await fetch("/api/users/profile", {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
-          current_password: formData.currentPassword,
-          new_password: formData.newPassword,
-          confirm_password: formData.confirmPassword,
+          full_name: formData.fullName.trim(),
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to change password");
+        throw new Error(data.error || "Failed to update full name");
       }
 
-      setSuccess("Password changed successfully!");
-      setFormData({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      });
+      setSuccess("Full name updated successfully!");
+      // Refresh profile data
+      fetchProfile();
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to change password"
+        err instanceof Error ? err.message : "Failed to update full name"
       );
     } finally {
       setIsSubmitting(false);
@@ -139,6 +144,13 @@ export function ProfileForm() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex items-center gap-2">
               <User className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm font-medium">Full Name:</span>
+              <span className="text-sm">
+                {profileData?.fullName || "Not set"}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <User className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm font-medium">Email:</span>
               <span className="text-sm">
                 {profileData?.email || user?.email}
@@ -161,6 +173,39 @@ export function ProfileForm() {
               </span>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Full Name Change Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Update Full Name</CardTitle>
+          <CardDescription>
+            Set or update your display name (minimum 3 characters)
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="fullName">Full Name</Label>
+              <Input
+                id="fullName"
+                type="text"
+                value={formData.fullName}
+                onChange={(e) => handleInputChange("fullName", e.target.value)}
+                placeholder="Enter your full name"
+                minLength={3}
+                required
+              />
+            </div>
+
+            <Button type="submit" disabled={isSubmitting} className="w-full">
+              {isSubmitting && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Update Full Name
+            </Button>
+          </form>
         </CardContent>
       </Card>
 

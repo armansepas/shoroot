@@ -7,11 +7,21 @@ import { eq } from "drizzle-orm";
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password, confirmPassword } = await request.json();
+    const { email, password, confirmPassword, fullName } = await request.json();
 
-    if (!email || !password || !confirmPassword) {
+    if (!email || !password || !confirmPassword || !fullName) {
       return NextResponse.json(
-        { error: "Email, password, and confirm password are required" },
+        {
+          error:
+            "Email, password, confirm password, and full name are required",
+        },
+        { status: 400 }
+      );
+    }
+
+    if (fullName.trim().length < 3) {
+      return NextResponse.json(
+        { error: "Full name must be at least 3 characters long" },
         { status: 400 }
       );
     }
@@ -52,6 +62,7 @@ export async function POST(request: NextRequest) {
       .insert(users)
       .values({
         email,
+        fullName: fullName.trim(),
         password: hashedPassword,
         role: "user",
       })

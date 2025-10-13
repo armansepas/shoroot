@@ -21,12 +21,21 @@ export function SignupForm({ onToggleToLogin }: SignupFormProps) {
   const { login, setLoading, setError, isLoading, error } = useAuth();
 
   const [email, setEmail] = useState("");
+  const [fullName, setFullName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const validateForm = () => {
     if (!email.trim()) {
       setError("Email is required");
+      return false;
+    }
+    if (!fullName.trim()) {
+      setError("Full name is required");
+      return false;
+    }
+    if (fullName.trim().length < 3) {
+      setError("Full name must be at least 3 characters long");
       return false;
     }
     if (!password.trim()) {
@@ -68,7 +77,12 @@ export function SignupForm({ onToggleToLogin }: SignupFormProps) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password, confirmPassword }),
+        body: JSON.stringify({
+          email,
+          fullName: fullName.trim(),
+          password,
+          confirmPassword,
+        }),
       });
 
       const data = await response.json();
@@ -88,8 +102,24 @@ export function SignupForm({ onToggleToLogin }: SignupFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+    <form onSubmit={handleSubmit} className="mt-8 space-y-6 px-4 sm:px-0">
       <div className="rounded-md shadow-sm -space-y-px">
+        <div>
+          <Label htmlFor="full-name" className="sr-only">
+            Full Name
+          </Label>
+          <Input
+            id="full-name"
+            name="fullName"
+            type="text"
+            autoComplete="name"
+            required
+            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-700 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+            placeholder="Full Name"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+          />
+        </div>
         <div>
           <Label htmlFor="email-address" className="sr-only">
             Email address
@@ -100,7 +130,7 @@ export function SignupForm({ onToggleToLogin }: SignupFormProps) {
             type="email"
             autoComplete="email"
             required
-            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
             placeholder="Email address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -116,7 +146,7 @@ export function SignupForm({ onToggleToLogin }: SignupFormProps) {
             type="password"
             autoComplete="new-password"
             required
-            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -132,7 +162,7 @@ export function SignupForm({ onToggleToLogin }: SignupFormProps) {
             type="password"
             autoComplete="new-password"
             required
-            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-700 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
             placeholder="Confirm Password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -140,7 +170,11 @@ export function SignupForm({ onToggleToLogin }: SignupFormProps) {
         </div>
       </div>
 
-      {error && <div className="text-red-600 text-sm text-center">{error}</div>}
+      {error && (
+        <div className="text-red-600 dark:text-red-400 text-sm text-center">
+          {error}
+        </div>
+      )}
 
       <div>
         <Button
@@ -156,7 +190,7 @@ export function SignupForm({ onToggleToLogin }: SignupFormProps) {
         <button
           type="button"
           onClick={onToggleToLogin}
-          className="font-medium text-indigo-600 hover:text-indigo-500"
+          className="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300"
         >
           Already have an account? Sign in
         </button>

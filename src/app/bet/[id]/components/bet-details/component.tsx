@@ -124,11 +124,15 @@ export function BetDetails({ betId }: BetDetailsProps) {
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
                       <span className="text-sm font-medium">
-                        {participant.userEmail.charAt(0).toUpperCase()}
+                        {(participant.userFullName || participant.userEmail)
+                          .charAt(0)
+                          .toUpperCase()}
                       </span>
                     </div>
                     <div>
-                      <p className="font-medium">{participant.userEmail}</p>
+                      <p className="font-medium">
+                        {participant.userFullName || participant.userEmail}
+                      </p>
                       {participant.selectedOptionText && (
                         <p className="text-sm text-muted-foreground">
                           Chose: {participant.selectedOptionText}
@@ -172,12 +176,14 @@ export function BetDetails({ betId }: BetDetailsProps) {
                 >
                   <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
                     <span className="text-white text-sm font-medium">
-                      {winner.userEmail.charAt(0).toUpperCase()}
+                      {(winner.userFullName || winner.userEmail)
+                        .charAt(0)
+                        .toUpperCase()}
                     </span>
                   </div>
                   <div>
                     <p className="font-medium text-green-800">
-                      {winner.userEmail}
+                      {winner.userFullName || winner.userEmail}
                     </p>
                     <p className="text-sm text-green-600">
                       Won with: {winner.selectedOptionText}

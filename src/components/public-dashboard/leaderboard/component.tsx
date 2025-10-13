@@ -42,7 +42,8 @@ export function Leaderboard({ stats }: LeaderboardProps) {
                     wins by
                   </p>
                   <p className="font-medium dark:text-white">
-                    {stats.topWinnerByCount.email}
+                    {stats.topWinnerByCount.fullName ||
+                      stats.topWinnerByCount.email}
                   </p>
                 </div>
               </CardContent>
@@ -64,7 +65,8 @@ export function Leaderboard({ stats }: LeaderboardProps) {
                     won by
                   </p>
                   <p className="font-medium dark:text-white">
-                    {stats.topWinnerByAmount.email}
+                    {stats.topWinnerByAmount.fullName ||
+                      stats.topWinnerByAmount.email}
                   </p>
                 </div>
               </CardContent>
@@ -110,7 +112,7 @@ export function Leaderboard({ stats }: LeaderboardProps) {
                       #{index + 1}
                     </TableCell>
                     <TableCell className="dark:text-white">
-                      {entry.email}
+                      {entry.fullName || entry.email}
                     </TableCell>
                     <TableCell className="text-green-600 dark:text-green-400 font-medium">
                       {entry.winCount}

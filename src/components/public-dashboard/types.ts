@@ -19,6 +19,7 @@ export interface Bet {
 export interface LeaderboardEntry {
   userId: number;
   email: string;
+  fullName: string | null;
   totalWon: number;
   totalLost: number;
   winCount: number;
@@ -36,11 +37,13 @@ export interface Stats {
   topWinnerByCount: {
     userId: number;
     email: string;
+    fullName: string | null;
     winCount: number;
   } | null;
   topWinnerByAmount: {
     userId: number;
     email: string;
+    fullName: string | null;
     totalWon: number;
   } | null;
   leaderboard: LeaderboardEntry[];

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 interface UserMenuProps {
-  user: { email: string } | null;
+  user: { email: string; fullName: string | null } | null;
   isAdmin: boolean;
   logout: () => void;
 }
@@ -60,7 +60,9 @@ export function UserMenu({ user, isAdmin, logout }: UserMenuProps) {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="flex items-center gap-2">
-            <span className="text-sm hidden sm:inline">{user.email}</span>
+            <span className="text-sm hidden sm:inline">
+              {user.fullName || user.email}
+            </span>
             <User className="h-4 w-4 sm:hidden" />
             <ChevronDown className="h-4 w-4" />
           </Button>

@@ -51,6 +51,7 @@ export async function GET(
         id: betParticipations.id,
         userId: betParticipations.userId,
         userEmail: users.email,
+        userFullName: users.fullName,
         selectedOptionId: betParticipations.selectedOptionId,
         isWinner: betParticipations.isWinner,
         participatedAt: betParticipations.participatedAt,
@@ -60,11 +61,12 @@ export async function GET(
       .where(eq(betParticipations.betId, betId))
       .orderBy(betParticipations.participatedAt);
 
-    // Format participants with option details and user email
+    // Format participants with option details and user info
     const formattedParticipants = participants.map((participant) => ({
       id: participant.id,
       userId: participant.userId,
       userEmail: participant.userEmail,
+      userFullName: participant.userFullName,
       selectedOptionText: participant.selectedOptionId
         ? options.find((opt) => opt.id === participant.selectedOptionId)
             ?.optionText

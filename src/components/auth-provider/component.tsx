@@ -27,6 +27,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           login({
             id: decoded.userId,
             email: decoded.email,
+            fullName: null, // We don't have this from token, will be loaded later
             role: decoded.role as "admin" | "user",
             createdAt: "", // We don't have this from token
             updatedAt: "",

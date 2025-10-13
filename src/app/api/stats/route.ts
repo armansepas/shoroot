@@ -62,12 +62,13 @@ export async function GET(request: NextRequest) {
       .select({
         userId: users.id,
         email: users.email,
+        fullName: users.fullName,
         winCount: sql<number>`COUNT(*)`,
       })
       .from(betParticipations)
       .innerJoin(users, eq(betParticipations.userId, users.id))
       .where(eq(betParticipations.isWinner, true))
-      .groupBy(users.id, users.email)
+      .groupBy(users.id, users.email, users.fullName)
       .orderBy(sql`COUNT(*) DESC`)
       .limit(1);
 
@@ -76,13 +77,14 @@ export async function GET(request: NextRequest) {
       .select({
         userId: users.id,
         email: users.email,
+        fullName: users.fullName,
         totalWon: sql<number>`SUM(${bets.amount})`,
       })
       .from(betParticipations)
       .innerJoin(users, eq(betParticipations.userId, users.id))
       .innerJoin(bets, eq(betParticipations.betId, bets.id))
       .where(eq(betParticipations.isWinner, true))
-      .groupBy(users.id, users.email)
+      .groupBy(users.id, users.email, users.fullName)
       .orderBy(sql`SUM(${bets.amount}) DESC`)
       .limit(1);
 
@@ -91,6 +93,7 @@ export async function GET(request: NextRequest) {
       .select({
         userId: users.id,
         email: users.email,
+        fullName: users.fullName,
         totalWon: sql<number>`COALESCE(SUM(CASE WHEN ${betParticipations.isWinner} = true THEN ${bets.amount} ELSE 0 END), 0)`,
         totalLost: sql<number>`COALESCE(SUM(CASE WHEN ${betParticipations.isWinner} = false THEN ${bets.amount} ELSE 0 END), 0)`,
         winCount: sql<number>`COALESCE(SUM(CASE WHEN ${betParticipations.isWinner} = true THEN 1 ELSE 0 END), 0)`,
@@ -100,7 +103,7 @@ export async function GET(request: NextRequest) {
       .from(betParticipations)
       .innerJoin(users, eq(betParticipations.userId, users.id))
       .innerJoin(bets, eq(betParticipations.betId, bets.id))
-      .groupBy(users.id, users.email)
+      .groupBy(users.id, users.email, users.fullName)
       .orderBy(
         sql`COALESCE(SUM(CASE WHEN ${betParticipations.isWinner} = true THEN 1 ELSE 0 END), 0) DESC`
       )
