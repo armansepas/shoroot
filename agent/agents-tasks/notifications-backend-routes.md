@@ -1,0 +1,14 @@
+- Add notifications table to database schema
+- Create API routes for notifications:
+  - GET /api/notifications - get all notifications for user
+  - POST /api/notifications/mark-read - mark specific notification as read
+  - POST /api/notifications/mark-all-read - mark all notifications as read
+  - GET /api/notifications/unread-count - get count of unread notifications
+- Modify existing routes to create notifications when events happen:
+  - Bet creation: notify all users
+  - Bet status change to resolved: notify participants
+  - Bet status change to in-progress: notify participants
+  - Bet deletion: notify participants
+  - New participant joins bet: notify existing participants with participant's name and chosen option
+  - New user registration: notify admins with new user's full name and registration date
+- Implement notification creation logic with proper data serialization

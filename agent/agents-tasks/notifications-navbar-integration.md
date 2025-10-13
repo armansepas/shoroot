@@ -1,0 +1,6 @@
+- Add notification bell component to navbar
+- Add red dot indicator when there are unread notifications
+- Create quick notifications modal that shows last 3 notifications
+- Add "View All" button in quick modal that navigates to notifications page
+- Update navbar layout to accommodate notification bell
+- Ensure bell is only visible to logged-in users

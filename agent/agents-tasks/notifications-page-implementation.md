@@ -1,0 +1,7 @@
+- Create /notifications page route
+- Implement notifications page component with Mark All as Read button
+- Create notifications list component with pagination
+- Create notification item component with View button
+- Create notification details modal
+- Add navigation link to notifications page in navbar user menu
+- Ensure responsive design for mobile and desktop

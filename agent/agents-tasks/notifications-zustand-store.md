@@ -1,0 +1,5 @@
+- Create notifications state in Zustand store
+- Include notifications array, unread count, loading states
+- Add actions for fetching notifications, marking as read, marking all as read
+- Integrate with existing auth store to clear notifications on logout
+- Add real-time update capability for new notifications
