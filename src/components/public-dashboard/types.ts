@@ -20,7 +20,10 @@ export interface LeaderboardEntry {
   userId: number;
   email: string;
   totalWon: number;
+  totalLost: number;
   winCount: number;
+  lostCount: number;
+  totalParticipation: number;
 }
 
 export interface Stats {

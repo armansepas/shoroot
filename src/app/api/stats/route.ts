@@ -86,21 +86,25 @@ export async function GET(request: NextRequest) {
       .orderBy(sql`SUM(${bets.amount}) DESC`)
       .limit(1);
 
-    // Get leaderboard (top 10 winners by total amount won)
+    // Get leaderboard (all users with participations, sorted by win count)
     const leaderboard = await db
       .select({
         userId: users.id,
         email: users.email,
-        totalWon: sql<number>`SUM(${bets.amount})`,
-        winCount: sql<number>`COUNT(*)`,
+        totalWon: sql<number>`COALESCE(SUM(CASE WHEN ${betParticipations.isWinner} = true THEN ${bets.amount} ELSE 0 END), 0)`,
+        totalLost: sql<number>`COALESCE(SUM(CASE WHEN ${betParticipations.isWinner} = false THEN ${bets.amount} ELSE 0 END), 0)`,
+        winCount: sql<number>`COALESCE(SUM(CASE WHEN ${betParticipations.isWinner} = true THEN 1 ELSE 0 END), 0)`,
+        lostCount: sql<number>`COALESCE(SUM(CASE WHEN ${betParticipations.isWinner} = false THEN 1 ELSE 0 END), 0)`,
+        totalParticipation: sql<number>`COUNT(*)`,
       })
       .from(betParticipations)
       .innerJoin(users, eq(betParticipations.userId, users.id))
       .innerJoin(bets, eq(betParticipations.betId, bets.id))
-      .where(eq(betParticipations.isWinner, true))
       .groupBy(users.id, users.email)
-      .orderBy(sql`SUM(${bets.amount}) DESC`)
-      .limit(10);
+      .orderBy(
+        sql`COALESCE(SUM(CASE WHEN ${betParticipations.isWinner} = true THEN 1 ELSE 0 END), 0) DESC`
+      )
+      .limit(50); // Show more users since we're showing all with participations
 
     // Ensure we return an array even if empty
     const leaderboardData = Array.isArray(leaderboard) ? leaderboard : [];

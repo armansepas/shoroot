@@ -77,10 +77,10 @@ export function Leaderboard({ stats }: LeaderboardProps) {
       <Card className="dark:bg-gray-800 dark:border-gray-700">
         <CardHeader>
           <CardTitle className="dark:text-white">
-            🏆 Leaderboard - Top Winners
+            🏆 Leaderboard - All Users
           </CardTitle>
           <CardDescription className="dark:text-gray-300">
-            Users ranked by total amount won
+            Users ranked by win count
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -90,10 +90,17 @@ export function Leaderboard({ stats }: LeaderboardProps) {
                 <TableRow>
                   <TableHead className="dark:text-gray-300">Rank</TableHead>
                   <TableHead className="dark:text-gray-300">User</TableHead>
-                  <TableHead className="dark:text-gray-300">
-                    Total Won
-                  </TableHead>
                   <TableHead className="dark:text-gray-300">Wins</TableHead>
+                  <TableHead className="dark:text-gray-300">Lost</TableHead>
+                  <TableHead className="dark:text-gray-300">
+                    Money Won
+                  </TableHead>
+                  <TableHead className="dark:text-gray-300">
+                    Money Lost
+                  </TableHead>
+                  <TableHead className="dark:text-gray-300">
+                    Total Participation
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -106,10 +113,19 @@ export function Leaderboard({ stats }: LeaderboardProps) {
                       {entry.email}
                     </TableCell>
                     <TableCell className="text-green-600 dark:text-green-400 font-medium">
-                      {formatCurrency(entry.totalWon)}
+                      {entry.winCount}
+                    </TableCell>
+                    <TableCell className="text-red-600 dark:text-red-400">
+                      {entry.lostCount || 0}
+                    </TableCell>
+                    <TableCell className="text-green-600 dark:text-green-400 font-medium">
+                      {formatCurrency(entry.totalWon || 0)}
+                    </TableCell>
+                    <TableCell className="text-red-600 dark:text-red-400">
+                      {formatCurrency(entry.totalLost || 0)}
                     </TableCell>
                     <TableCell className="dark:text-white">
-                      {entry.winCount}
+                      {entry.totalParticipation || 0}
                     </TableCell>
                   </TableRow>
                 ))}
