@@ -30,11 +30,11 @@ export function UserMenu({ user, isAdmin, logout }: UserMenuProps) {
 
   return (
     <div className="flex items-center gap-2">
-      {/* Dashboard Dropdown */}
+      {/* Dashboards Dropdown */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="flex items-center gap-2">
-            <span className="text-sm hidden sm:inline">{user.email}</span>
+            <span className="text-sm">Dashboards</span>
             <ChevronDown className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
@@ -56,21 +56,26 @@ export function UserMenu({ user, isAdmin, logout }: UserMenuProps) {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Profile Button */}
-      <Button variant="outline" asChild className="hidden sm:inline-flex">
-        <Link href="/profile">
-          <User className="h-4 w-4" />
-        </Link>
-      </Button>
-
-      {/* Logout Button */}
-      <Button
-        variant="outline"
-        onClick={handleLogout}
-        className="hidden sm:inline-flex"
-      >
-        <LogOut className="h-4 w-4" />
-      </Button>
+      {/* Profile Dropdown */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" className="flex items-center gap-2">
+            <span className="text-sm hidden sm:inline">{user.email}</span>
+            <User className="h-4 w-4 sm:hidden" />
+            <ChevronDown className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem asChild>
+            <Link href="/profile">Profile</Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={handleLogout}>
+            <LogOut className="h-4 w-4 mr-2" />
+            Logout
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }
