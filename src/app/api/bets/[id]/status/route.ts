@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { db } from "@/lib/db";
 import { bets, betParticipations, betOptions } from "@/lib/db/schema";
 import { eq, and, count } from "drizzle-orm";
+import { notifyBetParticipants } from "@/lib/notifications";
 
 export async function POST(
   request: NextRequest,
@@ -102,6 +103,31 @@ export async function POST(
         updatedAt: new Date(),
       })
       .where(eq(bets.id, betId));
+
+    // Create notifications based on status change
+    if (status === "resolved") {
+      notifyBetParticipants(
+        betId,
+        "bet_resolved",
+        `Bet resolved: ${bet.title}`,
+        `The bet "${bet.title}" has been resolved. Winners have been determined.`,
+        {
+          betId,
+          betTitle: bet.title,
+        }
+      );
+    } else if (status === "in-progress") {
+      notifyBetParticipants(
+        betId,
+        "bet_in_progress",
+        `Bet in progress: ${bet.title}`,
+        `The bet "${bet.title}" is now in progress. No more participants can join.`,
+        {
+          betId,
+          betTitle: bet.title,
+        }
+      );
+    }
 
     // Fetch updated bet data
     const [updatedBet] = await db

@@ -1,0 +1,1 @@
+export { NotificationDetailsModal } from "./component";

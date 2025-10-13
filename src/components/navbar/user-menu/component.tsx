@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { LogOut, User, ChevronDown } from "lucide-react";
+import { LogOut, User, ChevronDown, Bell } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -70,6 +70,12 @@ export function UserMenu({ user, isAdmin, logout }: UserMenuProps) {
         <DropdownMenuContent align="end">
           <DropdownMenuItem asChild>
             <Link href="/profile">Profile</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/notifications" className="flex items-center gap-2">
+              <Bell className="h-4 w-4" />
+              Notifications
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleLogout}>

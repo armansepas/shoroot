@@ -78,6 +78,28 @@ export const betOptionsRelations = relations(betOptions, ({ one, many }) => ({
   }),
 }));
 
+export const notifications = pgTable("notifications", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id),
+  type: text("type", {
+    enum: [
+      "new_bet",
+      "bet_resolved",
+      "bet_in_progress",
+      "bet_deleted",
+      "new_participant",
+      "new_user",
+    ],
+  }).notNull(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  data: text("data"), // JSON string for additional data
+  isRead: boolean("is_read").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const betParticipationsRelations = relations(
   betParticipations,
   ({ one }) => ({
@@ -95,3 +117,10 @@ export const betParticipationsRelations = relations(
     }),
   })
 );
+
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+  user: one(users, {
+    fields: [notifications.userId],
+    references: [users.id],
+  }),
+}));

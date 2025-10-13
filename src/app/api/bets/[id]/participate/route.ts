@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { db } from "@/lib/db";
-import { bets, betOptions, betParticipations } from "@/lib/db/schema";
+import { bets, betOptions, betParticipations, users } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
+import { notifyBetParticipants } from "@/lib/notifications";
 
 export async function POST(
   request: NextRequest,
@@ -91,12 +92,36 @@ export async function POST(
       );
     }
 
+    // Get user details for notification
+    const [user] = await db
+      .select({ fullName: users.fullName })
+      .from(users)
+      .where(eq(users.id, decoded.userId))
+      .limit(1);
+
     // Create participation record
     await db.insert(betParticipations).values({
       userId: decoded.userId,
       betId: betId,
       selectedOptionId: selectedOptionId,
     });
+
+    // Notify other participants about the new participant
+    notifyBetParticipants(
+      betId,
+      "new_participant",
+      `New participant in: ${bet.title}`,
+      `${user?.fullName || "A user"} joined the bet and chose "${
+        selectedOption.optionText
+      }".`,
+      {
+        betId,
+        betTitle: bet.title,
+        userFullName: user?.fullName || "Unknown User",
+        selectedOption: selectedOption.optionText,
+      },
+      decoded.userId // exclude the new participant from notification
+    );
 
     return NextResponse.json({
       message: "Successfully participated in bet",

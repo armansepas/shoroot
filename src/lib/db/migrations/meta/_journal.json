@@ -15,6 +15,13 @@
       "when": 1760314417000,
       "tag": "0001_lazy_patch",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1760315955739,
+      "tag": "0002_colorful_invisible_woman",
+      "breakpoints": true
     }
   ]
 }

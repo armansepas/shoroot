@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { bets, betOptions, betParticipations } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import { notifyBetParticipants } from "@/lib/notifications";
 
 export async function POST(
   request: NextRequest,
@@ -33,6 +34,18 @@ export async function POST(
         { status: 400 }
       );
     }
+
+    // Notify participants before deleting
+    notifyBetParticipants(
+      betId,
+      "bet_deleted",
+      `Bet deleted: ${existingBet.title}`,
+      `The bet "${existingBet.title}" has been deleted by an administrator.`,
+      {
+        betId,
+        betTitle: existingBet.title,
+      }
+    );
 
     // Delete in correct order: participations first, then options, then bet
     await db

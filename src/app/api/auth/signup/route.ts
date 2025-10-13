@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import { notifyAdmins } from "@/lib/notifications";
 
 export async function POST(request: NextRequest) {
   try {
@@ -77,6 +78,19 @@ export async function POST(request: NextRequest) {
       },
       process.env.NEXTAUTH_SECRET!,
       { expiresIn: "7d" }
+    );
+
+    // Notify admins about new user registration
+    notifyAdmins(
+      "new_user",
+      `New user registered: ${newUser.fullName || "Unknown User"}`,
+      `A new user has joined the platform.`,
+      {
+        userFullName: newUser.fullName || "Unknown User",
+        registrationDate:
+          newUser.createdAt?.toISOString().split("T")[0] ||
+          new Date().toISOString().split("T")[0],
+      }
     );
 
     // Return token and user data (excluding password)

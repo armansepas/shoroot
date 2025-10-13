@@ -5,6 +5,7 @@ import { Logo } from "./logo";
 import { AuthSection } from "./auth-section";
 import { UserMenu } from "./user-menu";
 import { DarkModeToggle } from "./dark-mode-toggle";
+import { NotificationBell } from "./notification-bell";
 
 export function Navbar() {
   const { user, isAuthenticated, isAdmin, logout } = useNavbarAuth();
@@ -18,6 +19,7 @@ export function Navbar() {
         {/* Right Section */}
         <div className="flex items-center gap-4">
           <DarkModeToggle />
+          {isAuthenticated && user && <NotificationBell />}
           {isAuthenticated && user ? (
             <UserMenu user={user} isAdmin={isAdmin} logout={logout} />
           ) : (

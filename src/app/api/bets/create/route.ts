@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { db } from "@/lib/db";
 import { bets, betOptions } from "@/lib/db/schema";
+import { notifyAllUsers } from "@/lib/notifications";
 
 export async function POST(request: NextRequest) {
   try {
@@ -104,6 +105,17 @@ export async function POST(request: NextRequest) {
 
       return { bet: newBet, options: newOptions };
     });
+
+    // Notify all users about the new bet
+    notifyAllUsers(
+      "new_bet",
+      `New bet: ${result.bet.title}`,
+      `A new bet has been created: "${result.bet.title}". Amount: ${result.bet.amount} toman.`,
+      {
+        betId: result.bet.id,
+        betTitle: result.bet.title,
+      }
+    );
 
     return NextResponse.json(
       {

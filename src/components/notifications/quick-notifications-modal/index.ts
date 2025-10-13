@@ -1,0 +1,1 @@
+export { QuickNotificationsModal } from "./component";
