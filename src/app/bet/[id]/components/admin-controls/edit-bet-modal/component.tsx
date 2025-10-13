@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Edit } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface EditBetModalProps {
   betId: number;
@@ -38,13 +38,13 @@ export function EditBetModal({
   });
 
   // Update form data when props change
-  useState(() => {
+  useEffect(() => {
     setFormData({
       title: currentTitle,
       description: currentDescription,
       amount: currentAmount.toString(),
     });
-  });
+  }, [currentTitle, currentDescription, currentAmount]);
 
   const handleSubmit = async () => {
     if (

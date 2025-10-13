@@ -20,11 +20,6 @@ export function AdminControls({ betId }: AdminControlsProps) {
   const [bet, setBet] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
-  // Only show admin controls if user is admin
-  if (!user || user.role !== "admin") {
-    return null;
-  }
-
   const fetchBet = async () => {
     try {
       const betData = await getSingleBet(betId);
@@ -37,6 +32,11 @@ export function AdminControls({ betId }: AdminControlsProps) {
   useEffect(() => {
     fetchBet();
   }, [betId]);
+
+  // Only show admin controls if user is admin
+  if (!user || user.role !== "admin") {
+    return null;
+  }
 
   const handleRemoveParticipant = async (participationId: number) => {
     if (!confirm("Are you sure you want to remove this participant?")) {
