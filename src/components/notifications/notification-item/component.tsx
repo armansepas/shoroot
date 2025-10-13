@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Eye, EyeOff } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import { NotificationDetailsModal } from "@/components/notifications/notification-details-modal";
+import { NotificationDetailsModal } from "@/components/notifications/notification-details-modal/component";
 
 interface NotificationItemProps {
   notification: Notification;

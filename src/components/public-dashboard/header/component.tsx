@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 interface HeaderProps {
   isAuthenticated: boolean;
@@ -15,7 +16,10 @@ export function Header({ isAuthenticated }: HeaderProps) {
   };
 
   return (
-    <div className="text-center mb-8">
+    <div className="text-center mb-8 content-center">
+      <div className="flex justify-center mb-4">
+        <Image src="/logo.jpg" alt="Logo" width={200} height={200} />
+      </div>
       <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
         Welcome to ShorOOt
       </h1>
@@ -24,7 +28,7 @@ export function Header({ isAuthenticated }: HeaderProps) {
         predictions!
       </p>
       <Button onClick={handleParticipateClick} size="lg" className="mb-8">
-        {isAuthenticated ? "View My Bets" : "Participate Now"}
+        {isAuthenticated ? "Participate Now" : "Sign in to Participate"}
       </Button>
     </div>
   );

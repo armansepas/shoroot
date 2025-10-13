@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Bell, CheckCheck } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import { NotificationsList } from "@/components/notifications/notifications-list";
+import { NotificationsList } from "@/components/notifications/notifications-list/component";
 
 export function NotificationsPageClient() {
   const { user, isAuthenticated } = useAuthStore();

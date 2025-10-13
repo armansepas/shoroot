@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNotifications } from "@/hooks/use-notifications";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Bell } from "lucide-react";
-import { QuickNotificationsModal } from "@/components/notifications/quick-notifications-modal";
+import { QuickNotificationsModal } from "@/components/notifications/quick-notifications-modal/component";
 
 export function NotificationBell() {
   const [showModal, setShowModal] = useState(false);
