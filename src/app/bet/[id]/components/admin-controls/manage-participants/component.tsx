@@ -24,7 +24,7 @@ export function ManageParticipants({
       {participants.map((participant: any) => (
         <div
           key={participant.id}
-          className="flex items-center justify-between p-2 border rounded dark:border-gray-600 dark:bg-gray-700"
+          className="flex items-center justify-between p-2 border rounded bg-card border-border"
         >
           <span className="dark:text-white">
             User {participant.userId} - {participant.selectedOptionText}

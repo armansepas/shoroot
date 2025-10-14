@@ -1,0 +1,36 @@
+1|3|armanabdisepas@gmail.com|سیتی|5000|lost|2025-08-23 12:30:01
+2|3|sepehryadak5@gmail.com|تاتنهام|5000|won|2025-08-23 12:38:10
+5|5|armanabdisepas@gmail.com|burnley|10000|lost|2025-08-30 13:04:52
+6|5|sepehryadak5@gmail.com|man utd|10000|won|2025-08-30 13:05:48
+8|7|sepehryadak5@gmail.com|یونایتد|20000|lost|2025-09-14 06:46:39
+9|7|armanabdisepas@gmail.com|سیتی|20000|lost|2025-09-14 06:46:47
+10|7|mbafatemi2003@gmail.com|یونایتد|20000|lost|2025-09-14 06:52:50
+11|9|armanabdisepas@gmail.com|چلسی|10000|pending|2025-09-20 13:06:48
+12|11|sepehryadak5@gmail.com|خیر|10000|pending|2025-09-30 14:30:44
+13|11|armanabdisepas@gmail.com|خیر|10000|pending|2025-09-30 14:30:46
+14|11|Teazpaa@teazpaa.com|خیر|10000|pending|2025-09-30 14:31:23
+15|12|armanabdisepas@gmail.com|liverpool|10000|lost|2025-10-04 07:12:41
+16|13|armanabdisepas@gmail.com|sunderland|10000|lost|2025-10-04 07:12:44
+17|14|armanabdisepas@gmail.com|پرستون نورث اند|10000|won|2025-10-04 07:12:53
+18|14|sepehryadak5@gmail.com|چارلتون اتلتیک|10000|lost|2025-10-04 07:12:54
+19|12|sepehryadak5@gmail.com|chelsea|10000|won|2025-10-04 07:12:58
+20|13|sepehryadak5@gmail.com|man utd|10000|won|2025-10-04 07:13:08
+21|17|sepehryadak5@gmail.com|خیر|300000|pending|2025-10-12 14:03:33
+22|16|sepehryadak5@gmail.com|خیر|300000|pending|2025-10-12 14:03:35
+23|15|sepehryadak5@gmail.com|Hell No!|10000|pending|2025-10-12 14:03:54
+24|16|armanabdisepas@gmail.com|خیر|300000|pending|2025-10-12 14:04:07
+25|15|armanabdisepas@gmail.com|عااااره بابا|10000|pending|2025-10-12 14:04:59
+26|17|Mbafatemi2003@gmail.com|بلی|300000|pending|2025-10-12 14:07:26
+27|16|Mbafatemi2003@gmail.com|بلی|300000|pending|2025-10-12 14:07:28
+28|15|Mbafatemi2003@gmail.com|Hell No!|10000|pending|2025-10-12 14:07:32
+29|17|armanabdisepas@gmail.com|خیر|300000|pending|2025-10-12 14:08:18
+30|17|arash00723@gmail.com|بلی|300000|pending|2025-10-12 14:09:55
+31|16|arash00723@gmail.com|بلی|300000|pending|2025-10-12 14:10:09
+32|15|arash00723@gmail.com|عااااره بابا|10000|pending|2025-10-12 14:10:22
+33|16|teezpaa@teezpaa.com|خیر|300000|pending|2025-10-12 14:10:36
+34|17|teezpaa@teezpaa.com|بلی|300000|pending|2025-10-12 14:10:40
+35|15|teezpaa@teezpaa.com|Hell No!|10000|pending|2025-10-12 14:10:56
+36|15|marketingteamseler@gmail.com|عااااره بابا|10000|pending|2025-10-14 05:36:50
+37|11|marketingteamseler@gmail.com|خیر|10000|pending|2025-10-14 05:37:58
+38|16|marketingteamseler@gmail.com|خیر|300000|pending|2025-10-14 05:40:08
+39|17|marketingteamseler@gmail.com|بلی|300000|pending|2025-10-14 05:40:11

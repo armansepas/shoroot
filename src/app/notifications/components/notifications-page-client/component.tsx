@@ -33,14 +33,19 @@ export function NotificationsPageClient() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="max-w-4xl">
       <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-3">
-          <Bell className="h-8 w-8" />
+        <div className="flex items-center gap-4">
+          <div className="text-5xl">🔔</div>
           <div>
-            <h1 className="text-3xl font-bold">Notifications</h1>
+            <h1 className="text-4xl font-bold text-foreground">
+              Notifications
+            </h1>
             {unreadCount > 0 && (
-              <Badge variant="destructive" className="mt-1">
+              <Badge
+                variant="destructive"
+                className="mt-2 px-3 py-1 text-sm font-medium"
+              >
                 {unreadCount} unread
               </Badge>
             )}
@@ -51,7 +56,7 @@ export function NotificationsPageClient() {
           <Button
             onClick={handleMarkAllAsRead}
             variant="outline"
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 hover:bg-primary hover:text-primary-foreground transition-colors"
           >
             <CheckCheck className="h-4 w-4" />
             Mark All as Read
@@ -59,16 +64,30 @@ export function NotificationsPageClient() {
         )}
       </div>
 
-      <Card>
+      <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle>All Notifications</CardTitle>
+          <CardTitle className="text-xl flex items-center gap-2">
+            📬 All Notifications
+          </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           {isLoading ? (
-            <div className="text-center py-8">Loading notifications...</div>
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <span className="ml-3 text-muted-foreground">
+                Loading notifications...
+              </span>
+            </div>
           ) : notifications.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              No notifications yet
+            <div className="text-center py-16">
+              <div className="text-6xl mb-4">📭</div>
+              <p className="text-muted-foreground text-lg">
+                No notifications yet
+              </p>
+              <p className="text-muted-foreground/70 text-sm mt-2">
+                You'll receive notifications about your bets and activities
+                here.
+              </p>
             </div>
           ) : (
             <NotificationsList notifications={notifications} />

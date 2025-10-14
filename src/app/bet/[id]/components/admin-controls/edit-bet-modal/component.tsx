@@ -99,13 +99,13 @@ export function EditBetModal({
       <DialogTrigger asChild>
         <Button
           variant="outline"
-          className="w-full dark:border-gray-600 dark:text-white dark:hover:bg-gray-700"
+          className="w-full hover:bg-accent hover:text-accent-foreground transition-colors"
         >
           <Edit className="h-4 w-4 mr-2" />
           Edit Bet
         </Button>
       </DialogTrigger>
-      <DialogContent className="dark:bg-gray-800 dark:border-gray-700">
+      <DialogContent className="shadow-2xl">
         <DialogHeader>
           <DialogTitle className="dark:text-white">Edit Bet</DialogTitle>
         </DialogHeader>
@@ -121,7 +121,6 @@ export function EditBetModal({
                 setFormData({ ...formData, title: e.target.value })
               }
               placeholder="Bet title"
-              className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             />
           </div>
           <div>
@@ -135,7 +134,6 @@ export function EditBetModal({
                 setFormData({ ...formData, description: e.target.value })
               }
               placeholder="Bet description"
-              className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             />
           </div>
           <div>
@@ -150,7 +148,6 @@ export function EditBetModal({
                 setFormData({ ...formData, amount: e.target.value })
               }
               placeholder="Bet amount"
-              className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             />
           </div>
           <div className="flex gap-2">
@@ -160,7 +157,7 @@ export function EditBetModal({
             <Button
               variant="outline"
               onClick={() => setOpen(false)}
-              className="dark:border-gray-600 dark:text-white dark:hover:bg-gray-700"
+              className="hover:bg-accent hover:text-accent-foreground transition-colors"
             >
               Cancel
             </Button>

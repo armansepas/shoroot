@@ -118,63 +118,80 @@ export function UserBetsDashboard() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center dark:text-white">Loading bets...</div>
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <span className="ml-3 text-muted-foreground">
+              Loading your bets...
+            </span>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center text-red-600 dark:text-red-400">
-          Error: {error}
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-center">
+            <div className="text-center">
+              <div className="text-destructive mb-2">⚠️</div>
+              <div className="text-destructive text-sm bg-destructive/10 p-4 rounded-lg border border-destructive/20 max-w-md">
+                Error: {error}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Header />
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-8">
+        <Header />
 
-      {/* User Stats */}
-      {userStats && <StatsCards userStats={userStats} />}
+        {/* User Stats */}
+        {userStats && <StatsCards userStats={userStats} />}
 
-      <Tabs
-        value={activeTab}
-        onValueChange={(value) => setActiveTab(value as TabType)}
-      >
-        <TabsList className="grid w-full grid-cols-4 dark:bg-gray-800">
-          <TabsTrigger value="all" className="dark:text-white">
-            {getTabLabel("all")}
-          </TabsTrigger>
-          <TabsTrigger value="active" className="dark:text-white">
-            {getTabLabel("active")}
-          </TabsTrigger>
-          <TabsTrigger value="in-progress" className="dark:text-white">
-            {getTabLabel("in-progress")}
-          </TabsTrigger>
-          <TabsTrigger value="resolved" className="dark:text-white">
-            {getTabLabel("resolved")}
-          </TabsTrigger>
-        </TabsList>
+        <Tabs
+          value={activeTab}
+          onValueChange={(value) => setActiveTab(value as TabType)}
+          className="w-full"
+        >
+          <TabsList className="grid w-full grid-cols-4 mb-8">
+            <TabsTrigger value="all" className="text-sm font-medium">
+              📊 {getTabLabel("all")}
+            </TabsTrigger>
+            <TabsTrigger value="active" className="text-sm font-medium">
+              ⚡ {getTabLabel("active")}
+            </TabsTrigger>
+            <TabsTrigger value="in-progress" className="text-sm font-medium">
+              ⏳ {getTabLabel("in-progress")}
+            </TabsTrigger>
+            <TabsTrigger value="resolved" className="text-sm font-medium">
+              ✅ {getTabLabel("resolved")}
+            </TabsTrigger>
+          </TabsList>
 
-        <TabsContent value={activeTab} className="mt-6">
-          <BetsGrid
-            bets={bets}
-            activeTab={activeTab}
-            onParticipate={handleParticipate}
-          />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value={activeTab} className="space-y-6">
+            <BetsGrid
+              bets={bets}
+              activeTab={activeTab}
+              onParticipate={handleParticipate}
+            />
+          </TabsContent>
+        </Tabs>
 
-      <ParticipateModal
-        isOpen={isParticipateModalOpen}
-        onClose={() => setIsParticipateModalOpen(false)}
-        bet={selectedBet}
-        onParticipate={handleParticipateSubmit}
-      />
+        <ParticipateModal
+          isOpen={isParticipateModalOpen}
+          onClose={() => setIsParticipateModalOpen(false)}
+          bet={selectedBet}
+          onParticipate={handleParticipateSubmit}
+        />
+      </div>
     </div>
   );
 }

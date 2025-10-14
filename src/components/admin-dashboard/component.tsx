@@ -293,79 +293,97 @@ export function AdminDashboard() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center">Loading admin dashboard...</div>
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <span className="ml-3 text-muted-foreground">
+              Loading admin dashboard...
+            </span>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center text-red-600">Error: {error}</div>
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-center">
+            <div className="text-center">
+              <div className="text-destructive mb-2">⚠️</div>
+              <div className="text-destructive text-sm bg-destructive/10 p-4 rounded-lg border border-destructive/20 max-w-md">
+                Error: {error}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Header />
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-8">
+        <Header />
 
-      {/* Admin Stats */}
-      {adminStats && <StatsCards adminStats={adminStats} />}
+        {/* Admin Stats */}
+        {adminStats && <StatsCards adminStats={adminStats} />}
 
-      <Tabs defaultValue="bets" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 dark:bg-gray-800">
-          <TabsTrigger value="bets" className="dark:text-white">
-            Bets Management
-          </TabsTrigger>
-          <TabsTrigger value="users" className="dark:text-white">
-            Users Management
-          </TabsTrigger>
-        </TabsList>
+        <Tabs defaultValue="bets" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsTrigger value="bets" className="text-sm font-medium">
+              🎯 Bets Management
+            </TabsTrigger>
+            <TabsTrigger value="users" className="text-sm font-medium">
+              👥 Users Management
+            </TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="users" className="mt-6">
-          <UsersTable
-            users={users}
-            onCreateUser={handleCreateUser}
-            onEditUser={handleEditUser}
-            onDeleteUser={handleDeleteUser}
-          />
-        </TabsContent>
+          <TabsContent value="users" className="space-y-6">
+            <UsersTable
+              users={users}
+              onCreateUser={handleCreateUser}
+              onEditUser={handleEditUser}
+              onDeleteUser={handleDeleteUser}
+            />
+          </TabsContent>
 
-        <TabsContent value="bets" className="mt-6">
-          <BetsTable
-            bets={bets}
-            onCreateBet={handleCreateBet}
-            onEditBet={handleEditBet}
-            onStatusChange={handleStatusChange}
-            onDeleteBet={handleDeleteBet}
-          />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="bets" className="space-y-6">
+            <BetsTable
+              bets={bets}
+              onCreateBet={handleCreateBet}
+              onEditBet={handleEditBet}
+              onStatusChange={handleStatusChange}
+              onDeleteBet={handleDeleteBet}
+            />
+          </TabsContent>
+        </Tabs>
 
-      <UserModal
-        isOpen={isUserModalOpen}
-        onClose={() => setIsUserModalOpen(false)}
-        user={selectedUser}
-        onSubmit={handleUserSubmit}
-        mode={userModalMode}
-      />
+        <UserModal
+          isOpen={isUserModalOpen}
+          onClose={() => setIsUserModalOpen(false)}
+          user={selectedUser}
+          onSubmit={handleUserSubmit}
+          mode={userModalMode}
+        />
 
-      <BetModal
-        isOpen={isBetModalOpen}
-        onClose={() => setIsBetModalOpen(false)}
-        bet={selectedBet}
-        onSubmit={handleBetSubmit}
-        mode={betModalMode}
-      />
+        <BetModal
+          isOpen={isBetModalOpen}
+          onClose={() => setIsBetModalOpen(false)}
+          bet={selectedBet}
+          onSubmit={handleBetSubmit}
+          mode={betModalMode}
+        />
 
-      <StatusModal
-        isOpen={isStatusModalOpen}
-        onClose={() => setIsStatusModalOpen(false)}
-        bet={selectedBet}
-        onSubmit={handleStatusSubmit}
-      />
+        <StatusModal
+          isOpen={isStatusModalOpen}
+          onClose={() => setIsStatusModalOpen(false)}
+          bet={selectedBet}
+          onSubmit={handleStatusSubmit}
+        />
+      </div>
     </div>
   );
 }

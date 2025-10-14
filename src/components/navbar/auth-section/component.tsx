@@ -11,11 +11,18 @@ export function AuthSection({ isAuthenticated }: AuthSectionProps) {
   }
 
   return (
-    <div className="flex items-center gap-2">
-      <Button variant="outline" asChild className="hidden sm:inline-flex">
+    <div className="flex items-center gap-3">
+      <Button
+        variant="outline"
+        asChild
+        className="hidden sm:inline-flex hover:bg-accent hover:text-accent-foreground transition-colors"
+      >
         <Link href="/auth/login">Sign In</Link>
       </Button>
-      <Button asChild>
+      <Button
+        asChild
+        className="bg-primary hover:bg-primary/90 transition-colors"
+      >
         <Link href="/auth/signup">Sign Up</Link>
       </Button>
     </div>

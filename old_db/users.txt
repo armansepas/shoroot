@@ -1,0 +1,13 @@
+1|admin@betting.com|$2a$10$suw4/ulj0R.syM5XCWnLXOKskMV8W3r7pG6z0P3QlOJeSRjDEYO9.|Admin User|admin|active|0|2025-08-23 07:04:14|2025-08-23 07:04:14
+2|havij@havij.com|$2a$10$Qx.Z61O.Gs1jOreW.6PJbejzNXXrxySDBEJ7oLzSRiQ.lTkc51FYm|havij|user|active|0|2025-08-23 07:07:52|2025-08-23 07:07:52
+12|armanabdisepas@gmail.com|$2a$10$LJvAiiAZlkGLWXkf02Upou2kFb5DEZYpW6PvUrBzovKOXhku9ahXi|arman|user|active|-700000|2025-08-23 12:16:58|2025-08-31 07:24:45
+18|sepehryadak5@gmail.com|$2a$10$/ByLAedZ8P07GTlB9D2pleyz92dwYbWBf0os1dpMAGNQC1BQDf9aW|Sepehr|user|active|-670000|2025-08-23 12:36:32|2025-08-31 07:24:38
+19|Monitor@gmail.com|$2a$10$zf11nuEw/3RvUzUr0ix2OOnObSm84LAetBaH78fHgsZCWLcb6QSMm|Monitor|user|active|0|2025-08-23 12:37:35|2025-08-23 12:37:35
+24|mohammad.adeli11111@gmail.com|$2a$10$OL/y27DLZ7umfPrsCfi6c.97n0xv2R6LeHWh/bQEkg3aYOiUwv8f.|Mohammad Adeli|user|active|-9000|2025-08-25 07:10:29|2025-08-25 07:10:29
+26|MBAFATEMI2003@GMAIL.COM|$2a$10$QfCcQ/ZGM.0Dv07CFKySoewfSEzeI9A.kFyaj/VbHUYztf.JyH6vW|miralifatemi|user|active|1000|2025-08-30 13:26:11|2025-08-30 13:26:11
+32|mbafatemi2003@gmail.com|$2a$10$T6YzODGu9w3HT2YUDbIqB.mRIIf2cu.U3ormH5SEeMwoCr3dwi3eC|Mirali|user|active|-19000|2025-09-14 06:52:45|2025-09-14 06:52:45
+36|Teazpaa@teazpaa.com|$2a$10$iskKqk1hlzgRJFgAPWpwle5utOJyJcVfmnKw1Ha8UtxV6ZNR2NTI2|Teazpaa|user|active|-9000|2025-09-30 07:17:50|2025-09-30 07:17:50
+39|Mbafatemi2003@gmail.com|$2a$10$v5kLWa0fDga545Iv5f2lYuoNEY5Jl4Fdjys.virOvenQsBsg3paga|Miralifatemi|user|active|-609000|2025-10-12 14:07:13|2025-10-12 14:07:13
+40|arash00723@gmail.com|$2a$10$v7Wv99faGvS32//giuNKbeONxF62VCnFp82pWxw34JsNeNhGJLy3K|Arash samani|user|active|-609000|2025-10-12 14:09:17|2025-10-12 14:09:17
+41|teezpaa@teezpaa.com|$2a$10$ZNFVvBhno0PdkmIxddPBbuA3tn/MvlpyfDgyTQyH3bWiwy50H9Gsi|teezpaa|user|active|-609000|2025-10-12 14:10:31|2025-10-12 14:10:31
+42|marketingteamseler@gmail.com|$2a$10$nMmhUqP/oeDZEp.Pzzb19uXB7PYwAIFcry2t45NDtc.hzsuFiyqCi|Kamran|user|active|-619000|2025-10-14 05:36:17|2025-10-14 05:36:17

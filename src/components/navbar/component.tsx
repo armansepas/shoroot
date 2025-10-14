@@ -11,7 +11,7 @@ export function Navbar() {
   const { user, isAuthenticated, isAdmin, logout } = useNavbarAuth();
 
   return (
-    <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 py-3">
+    <nav className="bg-card border-b border-border px-4 py-3 shadow-sm">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Logo */}
         <Logo />

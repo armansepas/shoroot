@@ -54,52 +54,86 @@ export function ParticipateModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Participate in Bet</DialogTitle>
-          <DialogDescription>
-            Choose your option for "{bet.title}". You can only participate once.
+      <DialogContent className="sm:max-w-[500px] shadow-2xl">
+        <DialogHeader className="pb-4">
+          <DialogTitle className="flex items-center gap-2 text-2xl">
+            🎯 Participate in Bet
+          </DialogTitle>
+          <DialogDescription className="text-base">
+            Choose your option for{" "}
+            <span className="font-semibold text-primary">"{bet.title}"</span>.
+            You can only participate once per bet.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="py-4">
-          <div className="mb-4">
-            <h4 className="font-medium text-gray-900 mb-2">Bet Details:</h4>
-            <p className="text-sm text-gray-600 mb-1">{bet.description}</p>
-            <p className="text-sm text-gray-600">Amount: {bet.amount} Toman</p>
+        <div className="py-4 space-y-6">
+          <div className="bg-muted/30 p-4 rounded-lg border border-border/50">
+            <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+              📋 Bet Details
+            </h4>
+            <p className="text-muted-foreground mb-2 leading-relaxed">
+              {bet.description}
+            </p>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">💰</span>
+              <span className="font-medium text-foreground">Amount:</span>
+              <span className="text-primary font-bold">{bet.amount} Toman</span>
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <h4 className="font-medium text-gray-900">Select Your Option:</h4>
-            {bet.options.map((option) => (
-              <button
-                key={option.id}
-                onClick={() => setSelectedOptionId(option.id)}
-                className={`w-full p-3 text-left border rounded-lg transition-colors ${
-                  selectedOptionId === option.id
-                    ? "border-blue-500 bg-blue-50 text-blue-900"
-                    : "border-gray-200 hover:border-gray-300"
-                }`}
-              >
-                <span className="font-medium">{option.optionText}</span>
-              </button>
-            ))}
+          <div className="space-y-3">
+            <h4 className="font-semibold text-foreground flex items-center gap-2">
+              🎲 Select Your Option
+            </h4>
+            <div className="grid gap-3">
+              {bet.options.map((option, index) => (
+                <button
+                  key={option.id}
+                  onClick={() => setSelectedOptionId(option.id)}
+                  className={`w-full p-4 text-left border-2 rounded-lg transition-all duration-200 hover:shadow-md ${
+                    selectedOptionId === option.id
+                      ? "border-primary bg-primary/10 text-primary-foreground shadow-lg scale-[1.02]"
+                      : "border-border hover:border-primary/50 bg-card hover:bg-muted/50"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
+                        selectedOptionId === option.id
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      {index + 1}
+                    </div>
+                    <span className="font-medium text-muted-foreground dark:text-primary">
+                      {option.optionText}
+                    </span>
+                    {selectedOptionId === option.id && (
+                      <div className="ml-auto text-primary text-xl">✓</div>
+                    )}
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="gap-3">
           <Button
             variant="outline"
             onClick={handleClose}
             disabled={isSubmitting}
+            className="hover:bg-accent hover:text-accent-foreground transition-colors"
           >
             Cancel
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={!selectedOptionId || isSubmitting}
+            className="bg-primary hover:bg-primary/90 transition-colors px-6"
           >
-            {isSubmitting ? "Participating..." : "Participate"}
+            {isSubmitting ? "🎲 Participating..." : "🎯 Participate"}
           </Button>
         </DialogFooter>
       </DialogContent>

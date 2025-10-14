@@ -67,7 +67,7 @@ export function DeleteBetModal({ betId, onBetDeleted }: DeleteBetModalProps) {
           Delete Bet
         </Button>
       </DialogTrigger>
-      <DialogContent className="dark:bg-gray-800 dark:border-gray-700">
+      <DialogContent className="shadow-2xl">
         <DialogHeader>
           <DialogTitle className="dark:text-white">Delete Bet</DialogTitle>
         </DialogHeader>
@@ -86,7 +86,7 @@ export function DeleteBetModal({ betId, onBetDeleted }: DeleteBetModalProps) {
           <Button
             variant="outline"
             onClick={() => setOpen(false)}
-            className="dark:border-gray-600 dark:text-white dark:hover:bg-gray-700"
+            className="hover:bg-accent hover:text-accent-foreground transition-colors"
           >
             Cancel
           </Button>

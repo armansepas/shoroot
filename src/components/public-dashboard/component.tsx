@@ -61,45 +61,59 @@ export function PublicDashboard() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center dark:text-white">Loading bets...</div>
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <span className="ml-3 text-muted-foreground">Loading bets...</span>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center text-red-600 dark:text-red-400">
-          Error: {error}
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-center">
+            <div className="text-center">
+              <div className="text-destructive mb-2">⚠️</div>
+              <div className="text-destructive text-sm bg-destructive/10 p-4 rounded-lg border border-destructive/20 max-w-md">
+                Error: {error}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Header isAuthenticated={isAuthenticated} />
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-8">
+        <Header isAuthenticated={isAuthenticated} />
 
-      <Tabs defaultValue="bets" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 dark:bg-gray-800">
-          <TabsTrigger value="bets" className="dark:text-white">
-            Available Bets
-          </TabsTrigger>
-          <TabsTrigger value="leaderboard" className="dark:text-white">
-            Leaderboard
-          </TabsTrigger>
-        </TabsList>
+        <Tabs defaultValue="bets" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsTrigger value="bets" className="text-sm font-medium">
+              Available Bets
+            </TabsTrigger>
+            <TabsTrigger value="leaderboard" className="text-sm font-medium">
+              Leaderboard
+            </TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="bets" className="mt-6">
-          <BetsGrid bets={bets} />
-        </TabsContent>
+          <TabsContent value="bets" className="space-y-6">
+            <BetsGrid bets={bets} />
+          </TabsContent>
 
-        <TabsContent value="leaderboard" className="mt-6">
-          {stats && <StatsCards stats={stats} />}
-          {stats && <Leaderboard stats={stats} />}
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="leaderboard" className="space-y-8">
+            {stats && <StatsCards stats={stats} />}
+            {stats && <Leaderboard stats={stats} />}
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 }

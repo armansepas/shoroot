@@ -92,13 +92,13 @@ export function ChangeStatusModal({
       <DialogTrigger asChild>
         <Button
           variant="outline"
-          className="w-full dark:border-gray-600 dark:text-white dark:hover:bg-gray-700"
+          className="w-full hover:bg-accent hover:text-accent-foreground transition-colors"
         >
           <Play className="h-4 w-4 mr-2" />
           Change Status
         </Button>
       </DialogTrigger>
-      <DialogContent className="dark:bg-gray-800 dark:border-gray-700">
+      <DialogContent className="shadow-2xl">
         <DialogHeader>
           <DialogTitle className="dark:text-white">
             Change Bet Status
@@ -110,10 +110,10 @@ export function ChangeStatusModal({
               Current status: {currentStatus}
             </Label>
             <Select value={newStatus} onValueChange={setNewStatus}>
-              <SelectTrigger className="dark:bg-gray-700 dark:border-gray-600">
+              <SelectTrigger>
                 <SelectValue placeholder="Select new status" />
               </SelectTrigger>
-              <SelectContent className="dark:bg-gray-700 dark:border-gray-600">
+              <SelectContent>
                 <SelectItem value="active">Active</SelectItem>
                 <SelectItem value="in-progress">In Progress</SelectItem>
                 <SelectItem value="resolved">Resolved</SelectItem>
@@ -124,10 +124,10 @@ export function ChangeStatusModal({
             <div>
               <Label className="dark:text-white">Winning Option</Label>
               <Select value={winningOption} onValueChange={setWinningOption}>
-                <SelectTrigger className="dark:bg-gray-700 dark:border-gray-600">
+                <SelectTrigger>
                   <SelectValue placeholder="Select winning option" />
                 </SelectTrigger>
-                <SelectContent className="dark:bg-gray-700 dark:border-gray-600">
+                <SelectContent>
                   {options?.map((option: any) => (
                     <SelectItem key={option.id} value={option.optionText}>
                       {option.optionText}
@@ -144,7 +144,7 @@ export function ChangeStatusModal({
             <Button
               variant="outline"
               onClick={() => setOpen(false)}
-              className="dark:border-gray-600 dark:text-white dark:hover:bg-gray-700"
+              className="hover:bg-accent hover:text-accent-foreground transition-colors"
             >
               Cancel
             </Button>

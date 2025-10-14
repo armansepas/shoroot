@@ -58,66 +58,82 @@ export function NotificationDetailsModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
-            <span>{notification.title}</span>
+      <DialogContent className="max-w-2xl shadow-2xl">
+        <DialogHeader className="pb-4">
+          <DialogTitle className="flex items-center justify-between text-xl">
+            <span className="flex items-center gap-2">
+              <div className="text-2xl">📬</div>
+              {notification.title}
+            </span>
             <Button
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="h-6 w-6 p-0"
+              className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive transition-colors"
             >
-              <X className="h-4 w-4" />
+              <X className="h-5 w-5" />
             </Button>
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4">
-          <div>
-            <h3 className="font-semibold text-sm text-muted-foreground mb-2">
-              DESCRIPTION
+        <div className="space-y-6">
+          <div className="bg-muted/30 p-4 rounded-lg">
+            <h3 className="font-semibold text-sm text-muted-foreground mb-3 uppercase tracking-wide">
+              📝 Description
             </h3>
-            <p className="text-sm">{notification.description}</p>
+            <p className="text-foreground leading-relaxed">
+              {notification.description}
+            </p>
           </div>
 
-          <div>
-            <h3 className="font-semibold text-sm text-muted-foreground mb-2">
-              REASON
+          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+            <h3 className="font-semibold text-sm text-blue-700 dark:text-blue-300 mb-3 uppercase tracking-wide">
+              💡 Reason
             </h3>
-            <p className="text-sm">{getReasonText(notification.type)}</p>
+            <p className="text-blue-800 dark:text-blue-200 leading-relaxed">
+              {getReasonText(notification.type)}
+            </p>
           </div>
 
           {parsedData && (
-            <div>
-              <h3 className="font-semibold text-sm text-muted-foreground mb-2">
-                DETAILS
+            <div className="bg-card border border-border p-4 rounded-lg">
+              <h3 className="font-semibold text-sm text-muted-foreground mb-4 uppercase tracking-wide">
+                📊 Details
               </h3>
-              <div className="bg-muted p-3 rounded-md">
+              <div className="bg-muted/50 p-4 rounded-md">
                 {notification.type === "new_participant" && (
-                  <div className="space-y-1 text-sm">
-                    <p>
-                      <strong>User:</strong> {parsedData.userFullName}
-                    </p>
-                    <p>
-                      <strong>Choice:</strong> {parsedData.selectedOption}
-                    </p>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex items-center gap-2">
+                      <span className="text-muted-foreground">👤</span>
+                      <strong className="text-foreground">User:</strong>
+                      <span>{parsedData.userFullName}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-muted-foreground">🎯</span>
+                      <strong className="text-foreground">Choice:</strong>
+                      <span>{parsedData.selectedOption}</span>
+                    </div>
                     {parsedData.betTitle && (
-                      <p>
-                        <strong>Bet:</strong> {parsedData.betTitle}
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">🎲</span>
+                        <strong className="text-foreground">Bet:</strong>
+                        <span>{parsedData.betTitle}</span>
+                      </div>
                     )}
                   </div>
                 )}
                 {notification.type === "new_user" && (
-                  <div className="space-y-1 text-sm">
-                    <p>
-                      <strong>User:</strong> {parsedData.userFullName}
-                    </p>
-                    <p>
-                      <strong>Registration Date:</strong>{" "}
-                      {parsedData.registrationDate}
-                    </p>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex items-center gap-2">
+                      <span className="text-muted-foreground">👤</span>
+                      <strong className="text-foreground">User:</strong>
+                      <span>{parsedData.userFullName}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-muted-foreground">📅</span>
+                      <strong className="text-foreground">Registration:</strong>
+                      <span>{parsedData.registrationDate}</span>
+                    </div>
                   </div>
                 )}
                 {(notification.type === "new_bet" ||
@@ -125,14 +141,18 @@ export function NotificationDetailsModal({
                   notification.type === "bet_in_progress" ||
                   notification.type === "bet_deleted") &&
                   parsedData.betTitle && (
-                    <div className="space-y-1 text-sm">
-                      <p>
-                        <strong>Bet:</strong> {parsedData.betTitle}
-                      </p>
+                    <div className="space-y-3 text-sm">
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">🎲</span>
+                        <strong className="text-foreground">Bet:</strong>
+                        <span>{parsedData.betTitle}</span>
+                      </div>
                       {parsedData.amount && (
-                        <p>
-                          <strong>Amount:</strong> {parsedData.amount} toman
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <span className="text-muted-foreground">💰</span>
+                          <strong className="text-foreground">Amount:</strong>
+                          <span>{parsedData.amount} toman</span>
+                        </div>
                       )}
                     </div>
                   )}
@@ -140,8 +160,9 @@ export function NotificationDetailsModal({
             </div>
           )}
 
-          <div className="text-xs text-muted-foreground border-t pt-4">
-            Received {formatDate(notification.createdAt)}
+          <div className="text-sm text-muted-foreground/70 border-t border-border pt-4 flex items-center gap-2">
+            <span className="text-lg">🕒</span>
+            <span>Received {formatDate(notification.createdAt)}</span>
           </div>
         </div>
       </DialogContent>

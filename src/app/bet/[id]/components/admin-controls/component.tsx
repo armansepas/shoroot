@@ -84,7 +84,7 @@ export function AdminControls({ betId }: AdminControlsProps) {
   }
 
   return (
-    <Card className="mt-6 dark:bg-gray-800 dark:border-gray-700">
+    <Card className="mt-6 shadow-lg">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 dark:text-white">
           <CheckCircle className="h-5 w-5" />

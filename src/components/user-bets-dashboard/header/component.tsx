@@ -1,11 +1,15 @@
 export function Header() {
   return (
-    <div className="mb-8">
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-        My Bets Dashboard
-      </h1>
-      <p className="text-gray-600 dark:text-gray-300">
-        Browse and participate in available bets
+    <div className="mb-8 text-center">
+      <div className="flex items-center justify-center gap-3 mb-4">
+        <div className="text-5xl">🎯</div>
+        <h1 className="text-4xl font-bold text-foreground">
+          My Bets Dashboard
+        </h1>
+      </div>
+      <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+        Track your betting journey, participate in exciting challenges, and
+        compete with others
       </p>
     </div>
   );

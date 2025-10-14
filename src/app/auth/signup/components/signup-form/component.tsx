@@ -102,10 +102,10 @@ export function SignupForm({ onToggleToLogin }: SignupFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-8 space-y-6 px-4 sm:px-0">
-      <div className="rounded-md shadow-sm -space-y-px">
-        <div>
-          <Label htmlFor="full-name" className="sr-only">
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="full-name" className="text-sm font-medium">
             Full Name
           </Label>
           <Input
@@ -114,14 +114,14 @@ export function SignupForm({ onToggleToLogin }: SignupFormProps) {
             type="text"
             autoComplete="name"
             required
-            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-700 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-            placeholder="Full Name"
+            className="transition-colors focus:ring-2 focus:ring-primary/20"
+            placeholder="Enter your full name"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
           />
         </div>
-        <div>
-          <Label htmlFor="email-address" className="sr-only">
+        <div className="space-y-2">
+          <Label htmlFor="email-address" className="text-sm font-medium">
             Email address
           </Label>
           <Input
@@ -130,14 +130,14 @@ export function SignupForm({ onToggleToLogin }: SignupFormProps) {
             type="email"
             autoComplete="email"
             required
-            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-            placeholder="Email address"
+            className="transition-colors focus:ring-2 focus:ring-primary/20"
+            placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
-        <div>
-          <Label htmlFor="password" className="sr-only">
+        <div className="space-y-2">
+          <Label htmlFor="password" className="text-sm font-medium">
             Password
           </Label>
           <Input
@@ -146,14 +146,14 @@ export function SignupForm({ onToggleToLogin }: SignupFormProps) {
             type="password"
             autoComplete="new-password"
             required
-            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-            placeholder="Password"
+            className="transition-colors focus:ring-2 focus:ring-primary/20"
+            placeholder="Create a password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        <div>
-          <Label htmlFor="confirm-password" className="sr-only">
+        <div className="space-y-2">
+          <Label htmlFor="confirm-password" className="text-sm font-medium">
             Confirm Password
           </Label>
           <Input
@@ -162,8 +162,8 @@ export function SignupForm({ onToggleToLogin }: SignupFormProps) {
             type="password"
             autoComplete="new-password"
             required
-            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-700 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-            placeholder="Confirm Password"
+            className="transition-colors focus:ring-2 focus:ring-primary/20"
+            placeholder="Confirm your password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
@@ -171,7 +171,7 @@ export function SignupForm({ onToggleToLogin }: SignupFormProps) {
       </div>
 
       {error && (
-        <div className="text-red-600 dark:text-red-400 text-sm text-center">
+        <div className="text-destructive text-sm text-center bg-destructive/10 p-3 rounded-md border border-destructive/20">
           {error}
         </div>
       )}
@@ -180,7 +180,7 @@ export function SignupForm({ onToggleToLogin }: SignupFormProps) {
         <Button
           type="submit"
           disabled={isLoading}
-          className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="w-full bg-primary hover:bg-primary/90 transition-colors"
         >
           {isLoading ? "Creating account..." : "Sign up"}
         </Button>
@@ -190,7 +190,7 @@ export function SignupForm({ onToggleToLogin }: SignupFormProps) {
         <button
           type="button"
           onClick={() => router.push("/auth/login")}
-          className="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300"
+          className="text-sm text-primary hover:text-primary/80 font-medium transition-colors"
         >
           Already have an account? Log in
         </button>

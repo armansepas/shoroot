@@ -21,51 +21,64 @@ export function BetsGrid({ bets }: BetsGridProps) {
       {bets.map((bet) => (
         <Card
           key={bet.id}
-          className="hover:shadow-lg transition-shadow dark:bg-gray-800 dark:border-gray-700"
+          className="hover:shadow-xl transition-all duration-300 hover:scale-[1.02] group border-border/50"
         >
-          <CardHeader>
-            <div className="flex justify-between items-start">
-              <CardTitle className="text-lg line-clamp-2 dark:text-white">
+          <CardHeader className="pb-4">
+            <div className="flex justify-between items-start gap-3">
+              <CardTitle className="text-lg line-clamp-2 text-foreground group-hover:text-primary transition-colors">
                 {bet.title}
               </CardTitle>
-              <Badge className={getStatusColor(bet.status)}>
+              <Badge className={`${getStatusColor(bet.status)} font-medium`}>
                 {bet.status.replace("-", " ")}
               </Badge>
             </div>
-            <CardDescription className="line-clamp-3 dark:text-gray-300">
+            <CardDescription className="line-clamp-3 text-muted-foreground">
               {bet.description}
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {/* Amount and Participants */}
-              <div className="flex justify-between text-sm text-gray-600 dark:text-gray-300">
-                <span>Bet Amount: {formatCurrency(bet.amount)}</span>
-                <span>{bet.participationCount} participants</span>
+              <div className="flex justify-between items-center text-sm">
+                <div className="flex items-center gap-1">
+                  <span className="font-medium text-foreground">Bet:</span>
+                  <span className="text-primary font-semibold">
+                    {formatCurrency(bet.amount)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="font-medium text-foreground">
+                    Participants:
+                  </span>
+                  <span className="text-muted-foreground">
+                    {bet.participationCount}
+                  </span>
+                </div>
               </div>
 
               {/* Options */}
-              <div className="space-y-1">
+              <div className="space-y-2">
                 {bet.options.map((option, index) => (
                   <div
                     key={option.id}
-                    className={`p-2 rounded text-sm border ${
+                    className={`p-3 rounded-md text-sm border transition-colors ${
                       bet.status === "resolved" &&
                       bet.winningOptionText === option.optionText
-                        ? "bg-green-50 dark:bg-green-900 border-green-200 text-green-800 dark:text-green-200"
-                        : "bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
+                        ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 shadow-sm"
+                        : "bg-muted/30 border-border text-foreground"
                     }`}
                   >
-                    <span className="font-medium dark:text-white">
-                      Option {index + 1}:
-                    </span>{" "}
-                    {option.optionText}
-                    {bet.status === "resolved" &&
-                      bet.winningOptionText === option.optionText && (
-                        <span className="ml-2 text-green-600 dark:text-green-400 font-bold">
-                          ✓ Winner
-                        </span>
-                      )}
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium">
+                        Option {index + 1}: {option.optionText}
+                      </span>
+                      {bet.status === "resolved" &&
+                        bet.winningOptionText === option.optionText && (
+                          <span className="text-green-600 dark:text-green-400 font-bold text-lg">
+                            🏆
+                          </span>
+                        )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -74,9 +87,9 @@ export function BetsGrid({ bets }: BetsGridProps) {
               <Link href={`/bet/${bet.id}`}>
                 <Button
                   variant="outline"
-                  className="w-full dark:border-gray-600 dark:text-white dark:hover:bg-gray-700"
+                  className="w-full group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all duration-300"
                 >
-                  View Details
+                  View Details →
                 </Button>
               </Link>
             </div>
@@ -85,9 +98,13 @@ export function BetsGrid({ bets }: BetsGridProps) {
       ))}
 
       {bets.length === 0 && (
-        <div className="col-span-full text-center py-12">
-          <p className="text-gray-500 dark:text-gray-400">
+        <div className="col-span-full text-center py-16">
+          <div className="text-6xl mb-4">🎲</div>
+          <p className="text-muted-foreground text-lg">
             No bets available at the moment.
+          </p>
+          <p className="text-muted-foreground/70 text-sm mt-2">
+            Check back later for new betting opportunities!
           </p>
         </div>
       )}

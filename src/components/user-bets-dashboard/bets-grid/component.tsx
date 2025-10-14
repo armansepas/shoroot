@@ -32,79 +32,100 @@ export function BetsGrid({ bets, activeTab, onParticipate }: BetsGridProps) {
           key={bet.id}
           className={`${getCardBackgroundColor(
             bet.status
-          )} hover:shadow-lg transition-shadow dark:bg-gray-800 dark:border-gray-700`}
+          )} hover:shadow-xl transition-all duration-300 hover:scale-[1.02] group border-border/50`}
         >
-          <CardHeader>
-            <div className="flex justify-between items-start">
-              <CardTitle className="text-lg line-clamp-2 dark:text-white">
+          <CardHeader className="pb-4">
+            <div className="flex justify-between items-start gap-3">
+              <CardTitle className="text-lg line-clamp-2 text-foreground group-hover:text-primary transition-colors">
                 {bet.title}
               </CardTitle>
-              <Badge className={getStatusColor(bet.status)}>
+              <Badge className={`${getStatusColor(bet.status)} font-medium`}>
                 {bet.status.replace("-", " ")}
               </Badge>
             </div>
-            <CardDescription className="line-clamp-3 dark:text-gray-300">
+            <CardDescription className="line-clamp-3 text-muted-foreground">
               {bet.description}
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {/* Amount, Participants, and Date */}
-              <div className="flex justify-between text-sm text-gray-600 dark:text-gray-300">
-                <span>Amount: {formatCurrency(bet.amount)}</span>
-                <span>{bet.participationCount} participants</span>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div className="flex items-center gap-1">
+                  <span className="font-medium text-foreground">Amount:</span>
+                  <span className="text-primary font-semibold">
+                    {formatCurrency(bet.amount)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="font-medium text-foreground">
+                    Participants:
+                  </span>
+                  <span className="text-muted-foreground">
+                    {bet.participationCount}
+                  </span>
+                </div>
               </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400">
+              <div className="text-xs text-muted-foreground">
                 Created: {new Date(bet.createdAt).toLocaleDateString()}
               </div>
 
               {/* Participation Status */}
               {bet.hasUserParticipated && (
-                <div className="text-sm text-blue-600 dark:text-blue-400 font-medium">
-                  ✓ You have participated in this bet
+                <div className="flex items-center gap-2 text-sm font-medium p-3 rounded-lg bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800">
+                  <span className="text-lg">✅</span>
+                  <span className="text-blue-700 dark:text-blue-300">
+                    You have participated in this bet
+                  </span>
                 </div>
               )}
 
               {/* Winning Option for Resolved Bets */}
               {bet.status === "resolved" && bet.winningOptionText && (
-                <div className="text-sm text-green-600 dark:text-green-400 font-medium">
-                  🏆 Winning Option: {bet.winningOptionText}
+                <div className="flex items-center gap-2 text-sm font-medium p-3 rounded-lg bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800">
+                  <span className="text-2xl">🏆</span>
+                  <span className="text-green-700 dark:text-green-300">
+                    Winner: {bet.winningOptionText}
+                  </span>
                 </div>
               )}
 
               {/* Options Preview */}
-              <div className="space-y-1">
-                <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <div className="space-y-2">
+                <div className="text-sm font-medium text-foreground">
                   Options:
                 </div>
                 {bet.options.slice(0, 2).map((option, index) => (
                   <div
                     key={option.id}
-                    className="text-sm text-gray-600 dark:text-gray-300"
+                    className="text-sm text-muted-foreground bg-muted/30 p-2 rounded"
                   >
                     {index + 1}. {option.optionText}
                   </div>
                 ))}
                 {bet.options.length > 2 && (
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                  <div className="text-sm text-muted-foreground/70">
                     +{bet.options.length - 2} more options available
                   </div>
                 )}
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 {canParticipate(bet) && (
-                  <Button onClick={() => onParticipate(bet)} className="flex-1">
-                    Participate
+                  <Button
+                    onClick={() => onParticipate(bet)}
+                    className="flex-1 bg-primary hover:bg-primary/90 transition-colors"
+                  >
+                    🎯 Participate
                   </Button>
                 )}
-                <Link href={`/bet/${bet.id}`}>
+                <Link href={`/bet/${bet.id}`} className="flex-1">
                   <Button
                     variant="outline"
-                    className="flex-1 dark:border-gray-600 dark:text-white dark:hover:bg-gray-700"
+                    className="w-full group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all duration-300"
                   >
-                    View Details
+                    View Details →
                   </Button>
                 </Link>
               </div>
@@ -114,11 +135,25 @@ export function BetsGrid({ bets, activeTab, onParticipate }: BetsGridProps) {
       ))}
 
       {currentBets.length === 0 && (
-        <div className="col-span-full text-center py-12">
-          <p className="text-gray-500 dark:text-gray-400">
+        <div className="col-span-full text-center py-16">
+          <div className="text-6xl mb-4">
+            {activeTab === "all"
+              ? "🎲"
+              : activeTab === "active"
+              ? "⚡"
+              : activeTab === "in-progress"
+              ? "⏳"
+              : "✅"}
+          </div>
+          <p className="text-muted-foreground text-lg">
             {activeTab === "all"
               ? "No bets available at the moment."
               : `No ${activeTab} bets found.`}
+          </p>
+          <p className="text-muted-foreground/70 text-sm mt-2">
+            {activeTab === "all"
+              ? "Check back later for new betting opportunities!"
+              : "Try switching to a different tab to see more bets."}
           </p>
         </div>
       )}
