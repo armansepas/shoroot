@@ -10,7 +10,10 @@ export async function POST(request: NextRequest) {
   try {
     const { email, password, confirmPassword, fullName } = await request.json();
 
-    if (!email || !password || !confirmPassword || !fullName) {
+    // Normalize email to lowercase
+    const normalizedEmail = email.toLowerCase();
+
+    if (!normalizedEmail || !password || !confirmPassword || !fullName) {
       return NextResponse.json(
         {
           error:
@@ -45,7 +48,7 @@ export async function POST(request: NextRequest) {
     const [existingUser] = await db
       .select()
       .from(users)
-      .where(eq(users.email, email))
+      .where(eq(users.email, normalizedEmail))
       .limit(1);
 
     if (existingUser) {
@@ -62,7 +65,7 @@ export async function POST(request: NextRequest) {
     const [newUser] = await db
       .insert(users)
       .values({
-        email,
+        email: normalizedEmail,
         fullName: fullName.trim(),
         password: hashedPassword,
         role: "user",

@@ -9,7 +9,10 @@ export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json();
 
-    if (!email || !password) {
+    // Normalize email to lowercase
+    const normalizedEmail = email.toLowerCase();
+
+    if (!normalizedEmail || !password) {
       return NextResponse.json(
         { error: "Email and password are required" },
         { status: 400 }
@@ -20,7 +23,7 @@ export async function POST(request: NextRequest) {
     const [user] = await db
       .select()
       .from(users)
-      .where(eq(users.email, email))
+      .where(eq(users.email, normalizedEmail))
       .limit(1);
 
     if (!user) {

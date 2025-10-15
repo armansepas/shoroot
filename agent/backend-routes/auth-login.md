@@ -5,7 +5,7 @@ Input:
 - email: string (required)
 - password: string (required)
 
-Logic: Validate credentials, return JWT token for authenticated users.
+Logic: Normalize email to lowercase, validate credentials, return JWT token for authenticated users.
 
 Output:
 
