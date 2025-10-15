@@ -1,0 +1,11 @@
+- description: this is the football dashboard where users can see live football matches details.
+- the dashboard shows football matches as rows in a table format.
+- there are 4 tabs: today, yesterday, tomorrow, day after tomorrow.
+- today's tab is the default tab.
+- each tab fetches data from a backend route that calls an external API for that specific date.
+- the table shows columns like: time, teams (home vs away), league, status (live/upcoming/finished), score if finished, etc.
+- the dashboard is visible to all users, even not logged in.
+- for admin users, there is a "Create Bet" button on each row, which opens the existing create bet modal but pre-fills the title with "Team A vs Team B" and options with the two team names.
+- the "Create Bet" button is only visible to admin users.
+- the backend route needs to be typed, meaning the API response from the external service should be properly typed.
+- the external API will be provided by the user, and its response structure should be documented in the backend route doc.
