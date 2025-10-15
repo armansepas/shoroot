@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -88,16 +88,25 @@ export function FootballDashboardComponent() {
 
     try {
       setBetsLoading(true);
+
+      // Get auth token from localStorage
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Authentication required");
+      }
+
       const response = await fetch("/api/bets/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(data),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create bet");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to create bet");
       }
 
       // Refresh bets in store or show success message
@@ -197,7 +206,7 @@ export function FootballDashboardComponent() {
                             return acc;
                           }, {} as Record<string, typeof matches>)
                         ).map(([league, leagueMatches]) => (
-                          <>
+                          <React.Fragment key={`league-${league}`}>
                             {/* League Header */}
                             <TableRow key={`header-${league}`}>
                               <TableCell
@@ -255,7 +264,7 @@ export function FootballDashboardComponent() {
                                 )}
                               </TableRow>
                             ))}
-                          </>
+                          </React.Fragment>
                         ))}
                       </TableBody>
                     </Table>
@@ -273,6 +282,21 @@ export function FootballDashboardComponent() {
         onClose={handleBetModalClose}
         mode="create"
         onSubmit={handleBetSubmit}
+        initialTitle={
+          selectedMatch
+            ? `${selectedMatch.homeTeam} vs ${selectedMatch.awayTeam}`
+            : ""
+        }
+        initialDescription={
+          selectedMatch
+            ? `Football match prediction: ${selectedMatch.homeTeam} vs ${selectedMatch.awayTeam} in ${selectedMatch.league}`
+            : ""
+        }
+        initialOptions={
+          selectedMatch
+            ? [selectedMatch.homeTeam, selectedMatch.awayTeam]
+            : ["", ""]
+        }
       />
     </div>
   );

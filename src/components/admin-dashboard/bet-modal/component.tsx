@@ -22,6 +22,9 @@ interface BetModalProps {
   bet?: Bet | null;
   onSubmit: (data: CreateBetData | UpdateBetData) => Promise<void>;
   mode: "create" | "edit";
+  initialTitle?: string;
+  initialDescription?: string;
+  initialOptions?: string[];
 }
 
 export function BetModal({
@@ -30,6 +33,9 @@ export function BetModal({
   bet,
   onSubmit,
   mode,
+  initialTitle = "",
+  initialDescription = "",
+  initialOptions = ["", ""],
 }: BetModalProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -50,13 +56,13 @@ export function BetModal({
       setAmount(bet.amount.toString());
       setOptions(bet.options.map((opt) => opt.optionText));
     } else {
-      setTitle("");
-      setDescription("");
+      setTitle(initialTitle);
+      setDescription(initialDescription);
       setAmount("");
-      setOptions(["", ""]);
+      setOptions(initialOptions);
     }
     setErrors({});
-  }, [bet, mode, isOpen]);
+  }, [bet, mode, isOpen, initialTitle, initialDescription, initialOptions]);
 
   const addOption = () => {
     setOptions([...options, ""]);
@@ -144,10 +150,10 @@ export function BetModal({
 
   const handleClose = () => {
     onClose();
-    setTitle("");
-    setDescription("");
+    setTitle(initialTitle);
+    setDescription(initialDescription);
     setAmount("");
-    setOptions(["", ""]);
+    setOptions(initialOptions);
     setErrors({});
   };
 
