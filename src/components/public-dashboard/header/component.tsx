@@ -54,6 +54,20 @@ export function Header({ isAuthenticated }: HeaderProps) {
           </Button>
         )}
       </div>
+
+      {/* Football Dashboard Link */}
+      <div className="flex justify-center">
+        <Button
+          variant="ghost"
+          asChild
+          className="text-primary hover:text-primary/80 hover:bg-primary/10 px-6 py-2"
+        >
+          <Link href="/football" className="flex items-center gap-2">
+            <span>🏆</span>
+            <span className="font-medium">View Football Matches</span>
+          </Link>
+        </Button>
+      </div>
     </div>
   );
 }

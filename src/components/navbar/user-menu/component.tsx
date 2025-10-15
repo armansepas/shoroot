@@ -61,6 +61,11 @@ export function UserMenu({ user, isAdmin, logout }: UserMenuProps) {
               <span>Public Bets</span>
             </Link>
           </DropdownMenuItem>
+          <DropdownMenuItem asChild className="cursor-pointer hover:bg-accent">
+            <Link href="/football" className="flex items-center gap-2">
+              <span>🏆 Football Matches</span>
+            </Link>
+          </DropdownMenuItem>
           {isAdmin && (
             <>
               <DropdownMenuSeparator />
