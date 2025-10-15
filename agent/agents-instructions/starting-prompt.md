@@ -87,3 +87,5 @@ When given a task to implement a feature:
 - Follow all architectural decisions from the MD files
 
 The goal is to build a robust, scalable betting application that follows all specified rules and maintains clean, maintainable code.
+
+Always update your task checklist as you complete each step.

@@ -9,6 +9,7 @@ import { EditBetModal } from "./edit-bet-modal";
 import { ChangeStatusModal } from "./change-status-modal";
 import { DeleteBetModal } from "./delete-bet-modal";
 import { ManageParticipants } from "./manage-participants";
+import { Participant } from "./manage-participants/types";
 
 interface AdminControlsProps {
   betId: number;
@@ -75,6 +76,38 @@ export function AdminControls({ betId }: AdminControlsProps) {
     }
   };
 
+  const handleChangeOption = async (userId: number, newOptionId: number) => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Authentication required");
+        return;
+      }
+
+      const response = await fetch(`/api/bets/${betId}/change-option`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ userId, newOptionId }),
+      });
+
+      if (response.ok) {
+        fetchBet(); // Refresh bet data
+      } else {
+        const error = await response.json();
+        alert(error.error || "Error changing participant option");
+      }
+    } catch (error) {
+      console.error("Error changing participant option:", error);
+      alert("Error changing participant option");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleBetDeleted = () => {
     window.location.href = "/admin"; // Redirect to admin dashboard
   };
@@ -108,7 +141,9 @@ export function AdminControls({ betId }: AdminControlsProps) {
         <DeleteBetModal betId={betId} onBetDeleted={handleBetDeleted} />
         <ManageParticipants
           participants={bet.participants}
+          betOptions={bet.options}
           onRemoveParticipant={handleRemoveParticipant}
+          onChangeOption={handleChangeOption}
           loading={loading}
         />
       </CardContent>
