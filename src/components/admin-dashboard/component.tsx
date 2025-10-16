@@ -24,7 +24,9 @@ export function AdminDashboard() {
   const [users, setUsers] = useState<User[]>([]);
   const [bets, setBets] = useState<Bet[]>([]);
   const [adminStats, setAdminStats] = useState<AdminStats | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [usersLoading, setUsersLoading] = useState(true);
+  const [betsLoading, setBetsLoading] = useState(true);
+  const [statsLoading, setStatsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [selectedBet, setSelectedBet] = useState<Bet | null>(null);
@@ -262,49 +264,40 @@ export function AdminDashboard() {
           }),
         ]);
 
-        if (!usersResponse.ok || !betsResponse.ok) {
-          throw new Error("Failed to fetch data");
+        if (usersResponse.ok) {
+          const usersData = await usersResponse.json();
+          setUsers(usersData.users);
+        } else {
+          console.error("Users fetch failed:", usersResponse.status);
         }
+        setUsersLoading(false);
 
-        const [usersData, betsData] = await Promise.all([
-          usersResponse.json(),
-          betsResponse.json(),
-        ]);
-
-        setUsers(usersData.users);
-        setBets(betsData.bets);
+        if (betsResponse.ok) {
+          const betsData = await betsResponse.json();
+          setBets(betsData.bets);
+        } else {
+          console.error("Bets fetch failed:", betsResponse.status);
+        }
+        setBetsLoading(false);
 
         if (statsResponse.ok) {
           const statsData = await statsResponse.json();
           console.log("Admin stats data:", statsData.adminStats); // Debug log
           setAdminStats(statsData.adminStats);
         } else {
-          console.error("Stats response failed:", statsResponse.status);
+          console.error("Stats fetch failed:", statsResponse.status);
         }
+        setStatsLoading(false);
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
-      } finally {
-        setIsLoading(false);
+        setUsersLoading(false);
+        setBetsLoading(false);
+        setStatsLoading(false);
       }
     };
 
     fetchData();
   }, [user]);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-            <span className="ml-3 text-muted-foreground">
-              Loading admin dashboard...
-            </span>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   if (error) {
     return (
@@ -342,22 +335,40 @@ export function AdminDashboard() {
           </TabsList>
 
           <TabsContent value="users" className="space-y-6">
-            <UsersTable
-              users={users}
-              onCreateUser={handleCreateUser}
-              onEditUser={handleEditUser}
-              onDeleteUser={handleDeleteUser}
-            />
+            {usersLoading ? (
+              <div className="flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                <span className="ml-3 text-muted-foreground">
+                  Loading users...
+                </span>
+              </div>
+            ) : (
+              <UsersTable
+                users={users}
+                onCreateUser={handleCreateUser}
+                onEditUser={handleEditUser}
+                onDeleteUser={handleDeleteUser}
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="bets" className="space-y-6">
-            <BetsTable
-              bets={bets}
-              onCreateBet={handleCreateBet}
-              onEditBet={handleEditBet}
-              onStatusChange={handleStatusChange}
-              onDeleteBet={handleDeleteBet}
-            />
+            {betsLoading ? (
+              <div className="flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                <span className="ml-3 text-muted-foreground">
+                  Loading bets...
+                </span>
+              </div>
+            ) : (
+              <BetsTable
+                bets={bets}
+                onCreateBet={handleCreateBet}
+                onEditBet={handleEditBet}
+                onStatusChange={handleStatusChange}
+                onDeleteBet={handleDeleteBet}
+              />
+            )}
           </TabsContent>
         </Tabs>
 

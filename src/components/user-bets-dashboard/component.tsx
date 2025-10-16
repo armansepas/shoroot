@@ -18,7 +18,8 @@ export function UserBetsDashboard() {
     resolved: [],
   });
   const [userStats, setUserStats] = useState<UserStats | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [betsLoading, setBetsLoading] = useState(true);
+  const [statsLoading, setStatsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>("all");
   const [selectedBet, setSelectedBet] = useState<Bet | null>(null);
@@ -43,12 +44,13 @@ export function UserBetsDashboard() {
           },
         });
 
-        if (!betsResponse.ok) {
-          throw new Error("Failed to fetch bets");
+        if (betsResponse.ok) {
+          const betsData = await betsResponse.json();
+          setBets((prev) => ({ ...prev, [activeTab]: betsData.bets }));
+        } else {
+          console.error("Bets fetch failed:", betsResponse.status);
         }
-
-        const betsData = await betsResponse.json();
-        setBets((prev) => ({ ...prev, [activeTab]: betsData.bets }));
+        setBetsLoading(false);
 
         // Fetch user stats
         const statsResponse = await fetch("/api/stats", {
@@ -60,11 +62,14 @@ export function UserBetsDashboard() {
         if (statsResponse.ok) {
           const statsData = await statsResponse.json();
           setUserStats(statsData.userStats);
+        } else {
+          console.error("Stats fetch failed:", statsResponse.status);
         }
+        setStatsLoading(false);
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
-      } finally {
-        setIsLoading(false);
+        setBetsLoading(false);
+        setStatsLoading(false);
       }
     };
 
@@ -116,21 +121,6 @@ export function UserBetsDashboard() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-            <span className="ml-3 text-muted-foreground">
-              Loading your bets...
-            </span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="min-h-screen bg-background">
@@ -154,7 +144,14 @@ export function UserBetsDashboard() {
         <Header />
 
         {/* User Stats */}
-        {userStats && <StatsCards userStats={userStats} />}
+        {statsLoading ? (
+          <div className="flex items-center justify-center mb-8">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+            <span className="ml-2 text-muted-foreground">Loading stats...</span>
+          </div>
+        ) : userStats ? (
+          <StatsCards userStats={userStats} />
+        ) : null}
 
         <Tabs
           value={activeTab}
@@ -177,11 +174,20 @@ export function UserBetsDashboard() {
           </TabsList>
 
           <TabsContent value={activeTab} className="space-y-6">
-            <BetsGrid
-              bets={bets}
-              activeTab={activeTab}
-              onParticipate={handleParticipate}
-            />
+            {betsLoading ? (
+              <div className="flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                <span className="ml-3 text-muted-foreground">
+                  Loading bets...
+                </span>
+              </div>
+            ) : (
+              <BetsGrid
+                bets={bets}
+                activeTab={activeTab}
+                onParticipate={handleParticipate}
+              />
+            )}
           </TabsContent>
         </Tabs>
 
