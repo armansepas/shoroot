@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/use-auth";
 import { Bet, BetOption } from "../types";
+import { TermsAcceptanceModal } from "@/components/terms-acceptance-modal";
 
 interface ParticipateModalProps {
   isOpen: boolean;
@@ -28,10 +29,37 @@ export function ParticipateModal({
 }: ParticipateModalProps) {
   const [selectedOptionId, setSelectedOptionId] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [termsContent, setTermsContent] = useState("");
   const { user } = useAuth();
 
   const handleSubmit = async () => {
     if (!bet || !selectedOptionId || !user) return;
+
+    // Check if user has accepted terms
+    if (!user.hasAcceptedTerms) {
+      // Fetch terms content and show acceptance modal
+      try {
+        const response = await fetch("/api/terms");
+        if (response.ok) {
+          const termsData = await response.json();
+          setTermsContent(termsData.content);
+          setShowTermsModal(true);
+        } else {
+          console.error("Failed to fetch terms");
+        }
+      } catch (error) {
+        console.error("Failed to fetch terms:", error);
+      }
+      return;
+    }
+
+    // User has accepted terms, proceed with participation
+    await proceedWithParticipation();
+  };
+
+  const proceedWithParticipation = async () => {
+    if (!bet || !selectedOptionId) return;
 
     setIsSubmitting(true);
     try {
@@ -42,6 +70,23 @@ export function ParticipateModal({
       console.error("Failed to participate:", error);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleTermsAccept = async () => {
+    try {
+      const response = await fetch("/api/terms/accept", {
+        method: "POST",
+      });
+      if (response.ok) {
+        setShowTermsModal(false);
+        // Now proceed with participation
+        await proceedWithParticipation();
+      } else {
+        console.error("Failed to accept terms");
+      }
+    } catch (error) {
+      console.error("Failed to accept terms:", error);
     }
   };
 
@@ -137,6 +182,13 @@ export function ParticipateModal({
           </Button>
         </DialogFooter>
       </DialogContent>
+
+      <TermsAcceptanceModal
+        isOpen={showTermsModal}
+        onAccept={handleTermsAccept}
+        onCancel={() => setShowTermsModal(false)}
+        termsContent={termsContent}
+      />
     </Dialog>
   );
 }

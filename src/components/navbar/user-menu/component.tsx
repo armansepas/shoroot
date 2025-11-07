@@ -77,6 +77,14 @@ export function UserMenu({ user, isAdmin, logout }: UserMenuProps) {
                   <span>Admin Dashboard</span>
                 </Link>
               </DropdownMenuItem>
+              <DropdownMenuItem
+                asChild
+                className="cursor-pointer hover:bg-accent"
+              >
+                <Link href="/admin/terms" className="flex items-center">
+                  <span>📄 Terms & Conditions</span>
+                </Link>
+              </DropdownMenuItem>
             </>
           )}
         </DropdownMenuContent>

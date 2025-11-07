@@ -15,6 +15,8 @@ export const users = pgTable("users", {
   fullName: text("full_name"),
   password: text("password").notNull(),
   role: text("role", { enum: ["admin", "user"] }).notNull(),
+  hasAcceptedTerms: boolean("has_accepted_terms").default(false).notNull(),
+  acceptedTermsAt: timestamp("accepted_terms_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -117,6 +119,13 @@ export const betParticipationsRelations = relations(
     }),
   })
 );
+
+export const termsAndConditions = pgTable("terms_and_conditions", {
+  id: serial("id").primaryKey(),
+  content: text("content").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
 
 export const notificationsRelations = relations(notifications, ({ one }) => ({
   user: one(users, {
